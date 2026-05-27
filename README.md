@@ -21,6 +21,17 @@
 
 > ⭐ **GSSoC 2026 contributors:** star this repo before opening a PR. The `star-check` workflow blocks unstarred merges. Read [CONTRIBUTING.md](./CONTRIBUTING.md#gssoc-2026) for the full point system.
 
+## Repos at a glance
+
+| Repo | What lives there | Where |
+|------|------------------|-------|
+| **TermUI** (you are here) | Framework source, 13 packages, examples, tests, `create-termui-app` CLI | https://github.com/Karanjot786/TermUI |
+| **TermUI_Docs** | Documentation website (Vite + TanStack + MDX), the source of [termui.io](https://www.termui.io) | https://github.com/Karanjot786/TermUI_Docs |
+
+- Bug in the framework or a widget? Open the issue **here**.
+- Typo or fix in the docs? Open it on **TermUI_Docs**.
+- GSSoC 2026 contributions count **only on this repo** (TermUI). The docs repo does not participate.
+
 ## What is TermUI?
 
 TermUI is a TypeScript framework for building terminal apps. You get a layout engine, JSX support, React-style hooks, focus management, global state, theming, animations, routing, real-time data, error boundaries, and a hot-reload dev server. No curses bindings. No C extensions. Pure TypeScript.

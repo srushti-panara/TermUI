@@ -16,6 +16,17 @@ bun run test
 
 You need **Bun 1.3 or newer**. The project is a Bun workspace monorepo with 13 packages under `packages/`. Node 18+ matters only if you consume published `@termuijs/*` packages from npm. Development is Bun-only.
 
+## Two-repo layout
+
+Framework code lives here. Docs site lives in a separate repo.
+
+| Repo | Contents | Where to send your PR |
+|------|----------|------------------------|
+| **TermUI** (this repo) | 13 packages, examples, tests, scaffolding CLI | Bug fixes, new widgets, hooks, refactors, tests |
+| **TermUI_Docs** | [termui.io](https://www.termui.io) source: Vite + TanStack + MDX content | Doc typos, new doc pages, website UI changes |
+
+[TermUI_Docs on GitHub](https://github.com/Karanjot786/TermUI_Docs). GSSoC 2026 counts only on **this** repo; the docs repo does not participate.
+
 ## Project structure
 
 ```
@@ -33,9 +44,10 @@ packages/
   dev-server/        Hot-reload dev server (uses Bun.spawn)
   quick/             Fluent builder API
   create-termui-app/ Project scaffolding CLI
-website/             Documentation site (Vite + TanStack Router)
 examples/            Working example apps
 ```
+
+API docs for each package live on https://www.termui.io. Edit those pages in [TermUI_Docs](https://github.com/Karanjot786/TermUI_Docs).
 
 ## Before you write code
 
@@ -115,7 +127,7 @@ Fixes #123
 
 **Types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `style`, `a11y`, `ci`, `build`, `security`
 
-**Scopes:** `core`, `widgets`, `ui`, `jsx`, `store`, `tss`, `router`, `motion`, `data`, `testing`, `dev-server`, `quick`, `create-termui-app`, `website`, `examples`
+**Scopes:** `core`, `widgets`, `ui`, `jsx`, `store`, `tss`, `router`, `motion`, `data`, `testing`, `dev-server`, `quick`, `create-termui-app`, `examples` (the `website` scope lives in the separate [TermUI_Docs](https://github.com/Karanjot786/TermUI_Docs) repo)
 
 The CI workflow auto-applies a `type:*` label from your PR title prefix. The label counts toward your GSSoC points.
 
@@ -129,7 +141,7 @@ The CI workflow auto-applies a `type:*` label from your PR title prefix. The lab
 6. Add a `caps.motion` guard if your widget animates.
 7. Export from the package's `index.ts`.
 8. Add tests. See `packages/widgets/src/data/Gauge.test.ts` for the pattern.
-9. Add a doc page in `website/src/content/`. Register it in `pages.ts`.
+9. Add a doc page. The doc site lives in a separate repo: [TermUI_Docs](https://github.com/Karanjot786/TermUI_Docs). Create your MDX in `src/content/`. Register it in `src/content/pages.ts`. Open the PR there.
 
 ## Adding a new theme
 
