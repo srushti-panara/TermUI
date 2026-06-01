@@ -32,6 +32,9 @@ describe('Grid layout', () => {
         expect(a.rect.x).toBe(0);
         expect(b.rect.x).toBe(20);
         
+        expect(a.rect.width).toBe(20);
+        expect(b.rect.width).toBe(20);
+
         // third item starts a new row
         expect(c.rect.x).toBe(0);
     });
