@@ -15,8 +15,9 @@ describe('Built-in Themes', () => {
         expect(names).toContain('catppuccin');
         expect(names).toContain('solarized');
         expect(names).toContain('highContrast');
+        expect(names).toContain('gruvbox');
         expect(names).toContain('tokyo-night');
-        expect(names).toHaveLength(8);
+        expect(names).toHaveLength(9);
     });
 
      it('tokyo-night theme contains expected palette values', () => {
@@ -51,5 +52,24 @@ describe('Built-in Themes', () => {
         expect(src).toContain('--text: #ffffff');
         expect(src).toContain('--border-color: #ffffff');
         expect(src).toContain('--border-focus: #00ffff');
+
+         });
+
+    it('nord theme uses official Nord palette hex values', () => {
+        const src = getBuiltinTheme('nord');
+        expect(src).toContain('--bg: #2e3440');
+        expect(src).toContain('--primary: #88c0d0');
+        expect(src).toContain('--error: #bf616a');
+    });
+
+    it('loads the gruvbox theme with correct palette values', () => {
+        const src = getBuiltinTheme('gruvbox');
+
+        expect(src).toBeDefined();
+
+        expect(src).toContain('@theme gruvbox');
+        expect(src).toContain('--bg: #282828');
+        expect(src).toContain('--text: #ebdbb2');
+        expect(src).toContain('--primary: #458588');
     });
 });
