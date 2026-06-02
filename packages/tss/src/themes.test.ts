@@ -15,7 +15,16 @@ describe('Built-in Themes', () => {
         expect(names).toContain('catppuccin');
         expect(names).toContain('solarized');
         expect(names).toContain('highContrast');
-        expect(names).toHaveLength(7);
+        expect(names).toContain('tokyo-night');
+        expect(names).toHaveLength(8);
+    });
+
+     it('tokyo-night theme contains expected palette values', () => {
+        const src = getBuiltinTheme('tokyo-night');
+
+        expect(src).toContain('--primary: #7aa2f7');
+        expect(src).toContain('--bg: #1a1b26');
+        expect(src).toContain('--text: #a9b1d6');
     });
 
     it('getBuiltinTheme returns source for valid name', () => {

@@ -115,7 +115,7 @@ export const NAMED_THEMES: Record<string, ThemeTokens> = {
   catppuccin: catppuccinTheme,
   monokai: monokaiTheme,
   solarized: solarizedTheme,
-  tokyoNight: tokyoNightTheme,
+  "tokyo-night": tokyoNightTheme,
   oneDark: oneDarkTheme,
   highContrast: highContrastTheme,
 };
