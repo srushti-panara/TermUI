@@ -126,6 +126,10 @@ export interface Computed<U> {
     subscribe(listener: (value: U) => void): () => void;
 }
 
+type DataOnly<T> = {
+    [K in keyof T as T[K] extends Function ? never : K]: T[K];
+};
+
 export interface Store<T> {
     /** Get the current state */
     getState(): T;
@@ -141,7 +145,7 @@ export interface Store<T> {
     reset(): void;
     
     /** Read the state captured at creation */
-    getInitialState(): T;
+    getInitialState(): DataOnly<T>;
 }
 
 // ── Store Implementation ──
@@ -327,14 +331,13 @@ export function createStore<T extends object>(
                 ([, value]) => typeof value !== 'function',
             ),
         ),
-    ) as Partial<T>;
+    ) as DataOnly<T>;
     
-    const getInitialState = (): T => {
-        return structuredClone(initialState) as T;
-    };
-    
+    const getInitialState = (): DataOnly<T> =>
+        structuredClone(initialState);
+
     const reset = (): void => {
-        setState(structuredClone(initialState) as Partial<T>);
+        setState(structuredClone(initialState) as unknown as Partial<T>);
     };
 
     // Rehydrate saved state if persist file exists
@@ -423,5 +426,5 @@ export interface UseStore<T> {
     destroy(): void;
     computed<U>(selector: Selector<T, U>): Computed<U>;
     reset(): void;
-    getInitialState(): T;
+    getInitialState(): DataOnly<T>;
 }
