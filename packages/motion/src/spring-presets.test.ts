@@ -33,9 +33,10 @@ describe('animateSpring preset support', () => {
 
     it('accepts a preset name', () => {
         const onFrame = vi.fn();
-
+    
         expect(() => {
-            animateSpring(0, 1, 'stiff', onFrame);
+            const cancel = animateSpring(0, 1, 'stiff', onFrame);
+            cancel();
         }).not.toThrow();
     });
 
