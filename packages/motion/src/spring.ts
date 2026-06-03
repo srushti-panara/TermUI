@@ -24,7 +24,7 @@ export type SpringPresetName =
     | 'slow'
     | 'molasses';
 
-export const SPRING_PRESETS: Record<string, SpringConfig> = {
+export const SPRING_PRESETS: Record<SpringPresetName, SpringConfig> = {
     default: { tension: 170, friction: 26, mass: 1, precision: 0.01 },
     gentle: { tension: 120, friction: 14, mass: 1, precision: 0.01 },
     wobbly: { tension: 180, friction: 12, mass: 1, precision: 0.01 },
@@ -92,7 +92,7 @@ export function animateSpring(
 
     const resolvedConfig =
         typeof config === 'string'
-            ? springPreset(config as SpringPresetName)
+            ? springPreset(config)
             : config;
 
     const cfg = {
