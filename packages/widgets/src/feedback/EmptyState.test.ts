@@ -83,5 +83,27 @@ describe('EmptyState', () => {
     
         expect(es.isDirty).toBe(true);
     });
-
+    
+    it('does not mark dirty when title is unchanged', () => {
+        const es = new EmptyState('Same title');
+    
+        es.clearDirty();
+        es.setTitle('Same title');
+    
+        expect(es.isDirty).toBe(false);
+    });
+    
+    it('does not mark dirty when description is unchanged', () => {
+        const es = new EmptyState(
+            'Title',
+            {},
+            { description: 'Same description' },
+        );
+    
+        es.clearDirty();
+        es.setDescription('Same description');
+    
+        expect(es.isDirty).toBe(false);
+    });
+    
 });
