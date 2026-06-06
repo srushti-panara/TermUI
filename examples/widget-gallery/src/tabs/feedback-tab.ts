@@ -2,14 +2,15 @@
 // Feedback Tab — MultiProgress, CommandPalette
 // ─────────────────────────────────────────────────────
 
-import { 
-    Widget, 
-    Box, 
-    Text, 
-    MultiProgress, 
-    CommandPalette, 
-    Callout, 
-    StatusMessage 
+import {
+    Widget,
+    Box,
+    Text,
+    MultiProgress,
+    CommandPalette,
+    Spinner,
+    Callout,
+    StatusMessage,
 } from '@termuijs/widgets';
 
 import type { Command } from '@termuijs/widgets';
@@ -141,6 +142,18 @@ export class FeedbackTab extends Widget {
             { border: 'single', flexGrow: 1 },
         );
         this._cmdPalette.open();
+                // ── Spinner Demos ──────────────────────────────
+        const spinnerLabel = new Text(' Spinner — Loading indicators (dots, line, pulse):', {
+            height: 1, bold: true, fg: { type: 'named', name: 'cyan' },
+        });
+
+        const spinnerRow = new Box({ flexDirection: 'row', height: 1, gap: 4 });
+        const spinnerDots = new Spinner({}, { preset: 'dots', label: 'dots' });
+        const spinnerLine = new Spinner({}, { preset: 'line', label: 'line' });
+        const spinnerPulse = new Spinner({}, { preset: 'pulse', label: 'pulse' });
+        spinnerRow.addChild(spinnerDots);
+        spinnerRow.addChild(spinnerLine);
+        spinnerRow.addChild(spinnerPulse);
 
         // Build widget tree
         this.addChild(header);
@@ -151,6 +164,8 @@ export class FeedbackTab extends Widget {
         this.addChild(feedbackBox);
         this.addChild(paletteLabel);
         this.addChild(this._cmdPalette);
+        this.addChild(spinnerLabel);
+        this.addChild(spinnerRow);
     }
 
     handleKey(key: string): void {
