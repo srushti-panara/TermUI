@@ -158,4 +158,5 @@ describe('StatusMessage', () => {
     
         expect(widget.isDirty).toBe(true);
     });
+    
 });
