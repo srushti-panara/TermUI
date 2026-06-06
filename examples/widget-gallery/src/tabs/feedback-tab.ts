@@ -12,7 +12,6 @@ import {
     StatusMessage 
 } from '@termuijs/widgets';
 
-// import { MultiProgress, CommandPalette } from '@termuijs/widgets';
 import type { Command } from '@termuijs/widgets';
 import type { Screen } from '@termuijs/core';
 
