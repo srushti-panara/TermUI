@@ -61,4 +61,27 @@ describe('EmptyState', () => {
         const hintRow = 6;
         expect(row(screen, hintRow).trim()).toContain('Press F5 to refresh');
     });
+
+    it('setTitle marks widget dirty', () => {
+        const es = new EmptyState('Old title');
+    
+        es.clearDirty();
+        es.setTitle('New title');
+    
+        expect(es.isDirty).toBe(true);
+    });
+    
+    it('setDescription marks widget dirty', () => {
+        const es = new EmptyState(
+            'Title',
+            {},
+            { description: 'Old description' },
+        );
+    
+        es.clearDirty();
+        es.setDescription('New description');
+    
+        expect(es.isDirty).toBe(true);
+    });
+
 });
