@@ -172,3 +172,17 @@ describe('Stopwatch – destroy()', () => {
         expect((sw as any)._intervalId).toBeUndefined();
     });
 });
+
+// ── 7. Mutation regression tests ─────────────────────────────────────────────
+describe('Stopwatch – mutation regression tests', () => {
+    it('stop marks widget dirty when running', () => {
+        const sw = new Stopwatch();
+
+        sw.start();
+        sw.clearDirty();
+
+        sw.stop();
+
+        expect(sw.isDirty).toBe(true);
+    });
+});
