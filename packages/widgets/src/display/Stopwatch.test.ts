@@ -171,6 +171,7 @@ describe('Stopwatch – destroy()', () => {
         sw.destroy();
         expect((sw as any)._intervalId).toBeUndefined();
     });
+});
 
 // ── 7. setInterval() mutation behavior ───────────────────────────────────
 describe('Stopwatch – setInterval()', () => {
@@ -201,4 +202,3 @@ describe('Stopwatch – setInterval()', () => {
     });
 });
 
-});
