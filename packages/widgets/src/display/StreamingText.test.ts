@@ -146,6 +146,20 @@ describe('StreamingText – setText()', () => {
         widget.setText('World');
         expect(widget.isDirty).toBe(true);
     });
+
+    it('setText updates rendered output after mutation', () => {
+        const widget = new StreamingText({ text: 'Old', speed: 0 });
+    
+        widget.setText('New');
+    
+        const screen = new Screen(20, 5);
+        widget.updateRect({ x: 0, y: 0, width: 20, height: 5 });
+        widget.render(screen);
+    
+        const line = rowText(screen, 0);
+        expect(line).toContain('New');
+    });
+
 });
 
 // ── 6. Cursor appears when _cursorVisible = true ──────────────────────────────
