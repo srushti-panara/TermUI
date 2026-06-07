@@ -174,3 +174,34 @@ describe('Timer – destroy()', () => {
         expect((timer as any)._intervalId).toBeUndefined();
     });
 });
+
+// ── 5. Mutation regression tests ─────────────────────────────────────────
+describe('Timer – mutation regression tests', () => {
+    it('reset marks widget dirty', () => {
+        const timer = new Timer({ duration: 5_000 });
+
+        timer.clearDirty();
+        timer.reset();
+
+        expect(timer.isDirty).toBe(true);
+    });
+
+    it('countdown tick marks widget dirty', () => {
+        vi.useFakeTimers();
+
+        const timer = new Timer({
+            duration: 5_000,
+            interval: 1_000,
+        });
+
+        timer.start();
+        timer.clearDirty();
+
+        vi.advanceTimersByTime(1_000);
+
+        expect(timer.isDirty).toBe(true);
+
+        timer.destroy();
+        vi.useRealTimers();
+    });
+});
