@@ -135,4 +135,40 @@ describe("Gradient Widget — Layout & Alignment", () => {
         widgetLeft.render(screen);
         expect(screen.back[0][0].char).toBe('A');
     });
+
+    it("does not mark dirty when text is unchanged", () => {
+        const widget = new Gradient("Hello");
+
+        widget.clearDirty();
+        widget.setText("Hello");
+
+        expect(widget.isDirty).toBe(false);
+    });
+
+    it("does not mark dirty when colors are unchanged", () => {
+        const widget = new Gradient("Hello", {}, { startColor: "#ff0000", endColor: "#0000ff" });
+
+        widget.clearDirty();
+        widget.setColors("#ff0000", "#0000ff");
+
+        expect(widget.isDirty).toBe(false);
+    });
+
+    it("marks dirty when text changes", () => {
+        const widget = new Gradient("Hello");
+
+        widget.clearDirty();
+        widget.setText("World");
+
+        expect(widget.isDirty).toBe(true);
+    });
+
+    it("marks dirty when colors change", () => {
+        const widget = new Gradient("Hello", {}, { startColor: "#ff0000", endColor: "#0000ff" });
+
+        widget.clearDirty();
+        widget.setColors("#00ff00", "#ffff00");
+
+        expect(widget.isDirty).toBe(true);
+    });
 });
