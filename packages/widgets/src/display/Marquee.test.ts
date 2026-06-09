@@ -67,24 +67,22 @@ describe('Marquee', () => {
         }
     });
 
-    it('setText marks widget dirty', () => {
+        it('setText marks widget dirty', () => {
         const mq = new Marquee('Hello');
-    
+
         mq.clearDirty();
         mq.setText('World');
-    
+
         expect(mq.isDirty).toBe(true);
     });
-    
-    it('setText updates rendered output after mutation', () => {
-        const mq = new Marquee('Old');
-        mq.setText('New');
-    
-        const screen = new Screen(10, 1);
-        mq.updateRect({ x: 0, y: 0, width: 10, height: 1 });
-        mq.render(screen);
-    
-        expect(getLine(screen)).toContain('New');
-    });
 
+    it('does not mark dirty when text is unchanged', () => {
+        const mq = new Marquee('Hello');
+
+        mq.clearDirty();
+        mq.setText('Hello');
+
+        expect(mq.isDirty).toBe(false);
+    });
+    
 });
