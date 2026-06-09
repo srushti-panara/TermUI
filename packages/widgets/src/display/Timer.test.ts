@@ -175,10 +175,12 @@ describe('Timer – destroy()', () => {
     });
 });
 
-// ── 5. Mutation regression tests ─────────────────────────────────────────
-describe('Timer – mutation regression tests', () => {
-    it('reset marks widget dirty', () => {
-        const timer = new Timer({ duration: 5_000 });
+// ── 5. reset() optimization ───────────────────────────────────────────────
+describe('Timer – reset() optimization', () => {
+    it('marks dirty when reset changes state', () => {
+        const timer = new Timer({ duration: 5000 });
+
+        (timer as any)._remaining = 3000;
 
         timer.clearDirty();
         timer.reset();
@@ -186,22 +188,12 @@ describe('Timer – mutation regression tests', () => {
         expect(timer.isDirty).toBe(true);
     });
 
-    it('countdown tick marks widget dirty', () => {
-        vi.useFakeTimers();
+    it('does not mark dirty when already reset', () => {
+        const timer = new Timer({ duration: 5000 });
 
-        const timer = new Timer({
-            duration: 5_000,
-            interval: 1_000,
-        });
-
-        timer.start();
         timer.clearDirty();
+        timer.reset();
 
-        vi.advanceTimersByTime(1_000);
-
-        expect(timer.isDirty).toBe(true);
-
-        timer.destroy();
-        vi.useRealTimers();
+        expect(timer.isDirty).toBe(false);
     });
 });

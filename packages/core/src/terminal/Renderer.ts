@@ -5,7 +5,7 @@
 import type { Terminal } from './Terminal.js';
 import { type Cell, cellsEqual, type Screen } from './Screen.js';
 import { type ColorDepth, colorToAnsiFg, colorToAnsiBg } from '../style/Color.js';
-import { moveTo, beginSyncUpdate, endSyncUpdate, reset as ansiReset } from '../utils/ansi.js';
+import { moveTo, beginSyncUpdate, endSyncUpdate, reset as ansiReset, stripAnsiControl } from '../utils/ansi.js';
 import { RenderHook } from '../renderer/render-hook.js';
 
 /**
@@ -230,7 +230,8 @@ export class Renderer {
             this._lastStyleFingerprint = fp;
         }
 
-        seq += cell.char || ' ';
+        // Write the character (sanitized to prevent escape injection)
+        seq += stripAnsiControl(cell.char) || ' ';
         return seq;
     }
 
