@@ -77,8 +77,8 @@ export class BigText extends Widget {
 
     setText(text: string): void {
         const normalized = text.toUpperCase();
-        if (normalized === this._text){
-            return
+        if (normalized === this._text) {
+            return;
         }
         this._text = normalized;
         this.markDirty();
