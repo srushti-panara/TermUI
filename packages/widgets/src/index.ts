@@ -46,6 +46,8 @@ export { Slider } from "./input/Slider.js";
 export type { SliderOptions } from "./input/Slider.js";
 export { RangeInput } from "./input/RangeInput.js";
 export type { RangeInputOptions } from "./input/RangeInput.js";
+export { PinInput } from "./input/PinInput.js";
+export type { PinInputOptions } from "./input/PinInput.js";
 export { Knob } from "./input/Knob.js";
 export type { KnobOptions } from "./input/Knob.js";
 
@@ -68,6 +70,8 @@ export { StatusIndicator } from './data/StatusIndicator.js';
 export type { StatusIndicatorOptions } from './data/StatusIndicator.js';
 export { BarChart } from './data/BarChart.js';
 export type { Bar, BarGroup, BarChartDirection, BarChartOptions } from './data/BarChart.js';
+export { GanttChart } from './data/GanttChart.js';
+export type { GanttChartOptions, GanttTask } from './data/GanttChart.js';
 
 // ── Layout Widgets ────────────────────────────────────
 export { Grid } from './layout/Grid.js';
@@ -155,6 +159,9 @@ export type { TagOptions, TagVariant } from './display/Tag.js';
 export { NotificationBadge } from './display/NotificationBadge.js';
 export type { NotificationBadgeOptions, BadgePosition } from './display/NotificationBadge.js';
 
+export { Carousel } from './display/Carousel.js';
+export type { CarouselOptions } from './display/Carousel.js';
+
 export { Tooltip } from './display/Tooltip.js';
 export type { TooltipOptions } from './display/Tooltip.js';
 
@@ -164,6 +171,10 @@ export type { ClockOptions } from './display/Clock.js';
 
 export { Link } from './display/Link.js';
 export type { LinkOptions } from './display/Link.js';
+
+export { ShortcutBar } from './display/ShortcutBar.js';
+export type { ShortcutItem, ShortcutBarOptions } from './display/ShortcutBar.js';
+
 
 // ── Missing layout elements restored ──
 export { QRCodePattern, QRCode } from './display/QRCode.js';
@@ -217,3 +228,4 @@ export type {
     ProgressProps,
     ProgressTask,
 } from './feedback/Progress.js';
+export * from './display/Highlight.js';
