@@ -36,7 +36,7 @@ export class Text extends Widget {
 
     /** Update the text content */
     setContent(content: string): void {
-        if (content === this._content){
+        if (content === this._content) {
             return;
         }
         this._content = content;
