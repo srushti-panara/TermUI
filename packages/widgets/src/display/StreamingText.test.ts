@@ -147,19 +147,15 @@ describe('StreamingText – setText()', () => {
         expect(widget.isDirty).toBe(true);
     });
 
-    it('setText updates rendered output after mutation', () => {
-        const widget = new StreamingText({ text: 'Old', speed: 0 });
+    it('does not mark widget dirty when text is unchanged', () => {
+        const widget = new StreamingText({ text: 'Hello', speed: 3 });
     
-        widget.setText('New');
+        widget.clearDirty();
+        widget.setText('Hello');
     
-        const screen = new Screen(20, 5);
-        widget.updateRect({ x: 0, y: 0, width: 20, height: 5 });
-        widget.render(screen);
-    
-        const line = rowText(screen, 0);
-        expect(line).toContain('New');
+        expect(widget.isDirty).toBe(false);
     });
-
+    
 });
 
 // ── 6. Cursor appears when _cursorVisible = true ──────────────────────────────
