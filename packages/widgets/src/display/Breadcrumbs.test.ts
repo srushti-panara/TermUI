@@ -92,4 +92,25 @@ describe('Breadcrumbs', () => {
         const row = rowText(screen, 0);
         expect(row).toContain('A / B');
     });
+
+    it('does not mark dirty when setSegments receives identical segments', () => {
+        const bc = new Breadcrumbs(['Home', 'Docs', 'API']);
+    
+        bc.clearDirty();
+    
+        bc.setSegments(['Home', 'Docs', 'API']);
+    
+        expect(bc.isDirty).toBe(false);
+    });
+    
+    it('marks dirty when setSegments receives different segments', () => {
+        const bc = new Breadcrumbs(['Home', 'Docs', 'API']);
+    
+        bc.clearDirty();
+    
+        bc.setSegments(['Home', 'Guides', 'API']);
+    
+        expect(bc.isDirty).toBe(true);
+    });
+
 });
