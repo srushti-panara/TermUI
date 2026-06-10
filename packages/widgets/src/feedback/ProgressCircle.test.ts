@@ -145,3 +145,57 @@ describe('ProgressCircle — unicode rendering', () => {
         expect(rendered).toBe('⣿⣿⣿⣿⣿⣿');
     });
 });
+
+describe('ProgressCircle — accessibility regression tests', () => {
+    it('renders 0% label when showLabel is enabled', () => {
+        vi.spyOn(caps, 'unicode', 'get').mockReturnValue(false);
+
+        const c = new ProgressCircle({}, {
+            value: 0,
+            showLabel: true,
+        });
+
+        c.updateRect({ x: 0, y: 0, width: 16, height: 1 });
+
+        const screen = new Screen(16, 1);
+
+        c.render(screen);
+
+        expect(row(screen, 0)).toContain('0%');
+    });
+
+    it('renders 100% label when showLabel is enabled', () => {
+        vi.spyOn(caps, 'unicode', 'get').mockReturnValue(false);
+
+        const c = new ProgressCircle({}, {
+            value: 1,
+            showLabel: true,
+        });
+
+        c.updateRect({ x: 0, y: 0, width: 16, height: 1 });
+
+        const screen = new Screen(16, 1);
+
+        c.render(screen);
+
+        expect(row(screen, 0)).toContain('100%');
+    });
+
+    it('does not overflow when width is smaller than the label width', () => {
+        const c = new ProgressCircle({}, {
+            value: 1,
+            showLabel: true,
+        });
+
+        c.updateRect({
+            x: 0,
+            y: 0,
+            width: 3,
+            height: 1,
+        });
+
+        const screen = new Screen(3, 1);
+
+        expect(() => c.render(screen)).not.toThrow();
+    });
+});
