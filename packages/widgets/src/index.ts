@@ -12,6 +12,8 @@ export { Text } from './display/Text.js';
 export type { TextProps } from './display/Text.js';
 export { LogView } from './display/LogView.js';
 export type { LogViewOptions } from './display/LogView.js';
+export { ProgressString } from './ProgressBar/ProgressBar.js';
+export type { ProgressStringProps, ProgressBarStyle } from './ProgressBar/ProgressBar.js';
 export { Tree } from './display/Tree.js';
 export type { TreeNode, TreeOptions } from './display/Tree.js';
 export { JSONView, jsonToTree } from './display/JSONView.js';
@@ -113,6 +115,7 @@ export { TaskList } from './feedback/TaskList.js';
 export type { TaskItem, TaskStatus, TaskListOptions } from './feedback/TaskList.js';
 export { Scrollbar } from './feedback/Scrollbar.js';
 export type { ScrollbarOrientation, ScrollbarOptions } from './feedback/Scrollbar.js';
+
 export { Skeleton } from './feedback/Skeleton.js';
 export type { SkeletonOptions } from './feedback/Skeleton.js';
 export { StatusMessage } from './feedback/StatusMessage.js';
