@@ -52,7 +52,29 @@ describe('ProgressCircle — value handling', () => {
     it('setValue marks the widget dirty', () => {
         const c = new ProgressCircle();
         (c as unknown as { _dirty: boolean })._dirty = false;
+
         c.setValue(0.5);
+
+        expect(c.isDirty).toBe(true);
+    });
+
+    it('does not mark dirty when setValue receives the same value', () => {
+        const c = new ProgressCircle({}, { value: 0.5 });
+
+        c.clearDirty();
+
+        c.setValue(0.5);
+
+        expect(c.isDirty).toBe(false);
+    });
+
+    it('marks dirty when setValue receives a different value', () => {
+        const c = new ProgressCircle({}, { value: 0.5 });
+
+        c.clearDirty();
+
+        c.setValue(0.75);
+
         expect(c.isDirty).toBe(true);
     });
 });
@@ -144,4 +166,5 @@ describe('ProgressCircle — unicode rendering', () => {
         const rendered = row(screen, 0);
         expect(rendered).toBe('⣿⣿⣿⣿⣿⣿');
     });
+
 });
