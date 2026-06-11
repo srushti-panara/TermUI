@@ -71,4 +71,33 @@ describe('List', () => {
         list.selectNext();
         expect(list.isDirty).toBe(true);
     });
+
+    it('does not mark dirty when setItems receives the same array reference', () => {
+        const items = [
+            { label: 'Apple', value: 'apple' }
+        ];
+    
+        const list = new List(items);
+    
+        list.clearDirty();
+    
+        list.setItems(items);
+    
+        expect(list.isDirty).toBe(false);
+    });
+    
+    it('marks dirty when setItems receives a different array', () => {
+        const list = new List([
+            { label: 'Apple', value: 'apple' }
+        ]);
+    
+        list.clearDirty();
+    
+        list.setItems([
+            { label: 'Banana', value: 'banana' }
+        ]);
+    
+        expect(list.isDirty).toBe(true);
+    });
+
 });

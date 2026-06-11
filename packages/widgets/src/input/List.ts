@@ -75,6 +75,9 @@ export class List extends Widget {
     // ── Mutations ─────────────────────────────────────
 
     setItems(items: ListItem[]): void {
+        if (items === this._items) {
+            return;
+        }
         this._items = items;
         if (this._selectedIndex >= items.length) {
             this._selectedIndex = Math.max(0, items.length - 1);
