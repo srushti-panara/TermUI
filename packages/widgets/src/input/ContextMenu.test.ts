@@ -159,21 +159,21 @@ describe('ContextMenu', () => {
 
     it('does not mark dirty when moveTo receives the same position', () => {
         const menu = new ContextMenu(items, 10, 5);
-    
+
         (menu as any)._dirty = false;
-    
+
         menu.moveTo(10, 5);
-    
+
         expect(menu.isDirty).toBe(false);
     });
-    
+
     it('marks dirty when moveTo receives a different position', () => {
         const menu = new ContextMenu(items, 10, 5);
-    
+
         (menu as any)._dirty = false;
-    
+
         menu.moveTo(20, 15);
-    
+
         expect(menu.isDirty).toBe(true);
     });
 
