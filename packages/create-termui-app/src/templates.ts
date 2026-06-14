@@ -458,7 +458,7 @@ function CliWrapper() {
     ]);
     const [running, setRunning] = useState(false);
     const [exitCode, setExitCode] = useState<number | null>(null);
-    const procRef = useRef<any>(null);
+    const procRef = useRef<ReturnType<typeof spawn> | null>(null);
     const theme = useTheme();
 
     const addLog = (level: LogLevel, text: string) =>
