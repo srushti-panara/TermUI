@@ -8,6 +8,7 @@ export type { TerminalOptions } from './terminal/Terminal.js';
 export { Screen, emptyCell, cellsEqual } from './terminal/Screen.js';
 export type { Cell } from './terminal/Screen.js';
 export { Renderer } from './terminal/Renderer.js';
+export type { FrameStats } from './terminal/Renderer.js';
 export { LayerManager } from './terminal/LayerManager.js';
 export type { Layer } from './terminal/LayerManager.js';
 export { caps, prefersReducedMotion, shouldUseColor, prefersHighContrast } from './terminal/env-caps.js';

@@ -31,6 +31,7 @@ export { Rating } from './display/Rating.js';
 export type { RatingOptions } from './display/Rating.js';
 export { Pty } from './display/Pty.js';
 export type { PtyOptions } from './display/Pty.js';
+export { PerformanceOverlay } from './display/PerformanceOverlay.js';
 
 // ── Virtual Scroll Helpers ────────────────────────────
 export { computeRange, computeVariableRange } from './input/virtual-scroll.js';
