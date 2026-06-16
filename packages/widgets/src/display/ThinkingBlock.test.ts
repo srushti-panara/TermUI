@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { Screen, type KeyEvent } from '@termuijs/core';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { Screen, type KeyEvent, caps } from '@termuijs/core';
 import { ThinkingBlock } from './ThinkingBlock.js';
 
 const key = (k: string): KeyEvent => ({ key: k, ctrl: false, alt: false, shift: false, raw: Buffer.alloc(0), stopPropagation: () => {}, preventDefault: () => {} });
@@ -10,6 +10,10 @@ function render(widget: ThinkingBlock) {
     widget.render(screen);
     return screen;
 }
+
+afterEach(() => {
+    vi.restoreAllMocks();
+});
 
 describe('ThinkingBlock', () => {
     it('renders collapsed state', () => {
@@ -47,4 +51,16 @@ describe('ThinkingBlock', () => {
 
         expect((block as any)._streaming).toBe(true);
     });
+
+    it('uses ASCII borders when caps.unicode is false', () => {
+        vi.spyOn(caps, 'unicode', 'get').mockReturnValue(false);
+        const block = new ThinkingBlock();
+        block.handleKey(key('enter')); // expand
+        const screen = render(block);
+        expect(screen.back[0]?.[0]?.char).toBe('+');
+        expect(screen.back[0]?.[1]?.char).toBe('-');
+        const secondRow = screen.back[1];
+        expect(secondRow?.[0]?.char).toBe('|');
+    });
+
 });
