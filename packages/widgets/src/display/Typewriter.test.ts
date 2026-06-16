@@ -159,4 +159,19 @@ describe('Typewriter', () => {
     const row = screen.back[0].map((c) => c.char).join('');
     expect(row.trim()).toBe('');
   });
+
+  it('reveals all text immediately when reduced motion is preferred', () => {
+    vi.spyOn(caps, 'motion', 'get').mockReturnValue(false);
+  
+    const tw = new Typewriter('hello');
+  
+    tw.tick();
+  
+    const row = renderRow(tw);
+  
+    expect(row).toContain('hello');
+    expect(row).not.toContain('▋');
+    expect(row).not.toContain('_');
+  });
+
 });

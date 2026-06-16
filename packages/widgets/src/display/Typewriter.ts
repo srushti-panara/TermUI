@@ -1,5 +1,5 @@
 import { Widget } from '../base/Widget.js';
-import { type Screen, type Style, caps, styleToCellAttrs, stringWidth } from '@termuijs/core';
+import { type Screen, type Style, caps, styleToCellAttrs, stringWidth, prefersReducedMotion } from '@termuijs/core';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TypewriterOptions
@@ -60,10 +60,19 @@ export class Typewriter extends Widget {
 
   /** Advance the reveal head by `speed` characters. No-op once fully revealed. */
   tick(): void {
-    const len = Array.from(segmenter.segment(this._text)).length;
-    if (this._revealed >= len) return;
-    this._revealed = Math.min(this._revealed + this._speed, len);
-    this.markDirty();
+      const len = Array.from(segmenter.segment(this._text)).length;
+  
+      if (prefersReducedMotion()) {
+          if (this._revealed >= len) return;
+          this._revealed = len;
+          this.markDirty();
+          return;
+      }
+  
+      if (this._revealed >= len) return;
+  
+      this._revealed = Math.min(this._revealed + this._speed, len);
+      this.markDirty();
   }
 
   /** Return the reveal counter to zero. */
