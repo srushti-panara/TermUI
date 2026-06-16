@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Marquee } from './Marquee.js';
-import { Screen } from '@termuijs/core';
+import { Screen, caps } from '@termuijs/core';
 
 function renderMarquee(text: string, opts: any = {}, width = 10, height = 1) {
     const mq = new Marquee(text, {}, opts);
@@ -83,6 +83,23 @@ describe('Marquee', () => {
         mq.setText('Hello');
 
         expect(mq.isDirty).toBe(false);
+    });
+
+    it('does not scroll when reduced motion is preferred', () => {
+        vi.spyOn(caps, 'motion', 'get').mockReturnValue(false);
+    
+        const { mq, screen: s1 } = renderMarquee('Hello', {}, 5, 1);
+    
+        const first = getLine(s1);
+    
+        mq.tick();
+    
+        const s2 = new Screen(5, 1);
+        mq.render(s2);
+    
+        const second = getLine(s2);
+    
+        expect(second).toBe(first);
     });
     
 });
