@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Marquee } from './Marquee.js';
 import { Screen, caps } from '@termuijs/core';
 
@@ -13,6 +13,10 @@ function renderMarquee(text: string, opts: any = {}, width = 10, height = 1) {
 function getLine(screen: Screen): string {
     return screen.back[0].map((c: { char: string }) => c.char).join('');
 }
+
+afterEach(() => {
+    vi.restoreAllMocks();
+});
 
 describe('Marquee', () => {
     it('renders text clipped to width on first frame', () => {
