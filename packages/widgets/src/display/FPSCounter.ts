@@ -1,4 +1,4 @@
-import { type Screen, type Style, styleToCellAttrs } from '@termuijs/core';
+import { type Screen, type Style, styleToCellAttrs, truncate } from '@termuijs/core';
 import { Widget } from '../base/Widget.js';
 
 export interface FPSCounterOptions {
@@ -61,7 +61,7 @@ export class FPSCounter extends Widget {
         screen.writeString(
             x,
             y + row++,
-            `FPS: ${this._fps}`.slice(0, width),
+            truncate(`FPS: ${this._fps}`, width),
             attrs,
         );
 
@@ -69,7 +69,7 @@ export class FPSCounter extends Widget {
             screen.writeString(
                 x,
                 y + row++,
-                `Avg: ${this.getAverageFPS().toFixed(1)}`.slice(0, width),
+                truncate(`Avg: ${this.getAverageFPS().toFixed(1)}`, width),
                 attrs,
             );
         }
@@ -78,7 +78,7 @@ export class FPSCounter extends Widget {
             screen.writeString(
                 x,
                 y + row++,
-                `Min: ${this._minFps === Infinity ? 0 : this._minFps}`.slice(0, width),
+                truncate(`Min: ${this._minFps === Infinity ? 0 : this._minFps}`, width),
                 attrs,
             );
         }
@@ -87,7 +87,7 @@ export class FPSCounter extends Widget {
             screen.writeString(
                 x,
                 y + row,
-                `Max: ${this._maxFps}`.slice(0, width),
+                truncate(`Max: ${this._maxFps}`, width),
                 attrs,
             );
         }
