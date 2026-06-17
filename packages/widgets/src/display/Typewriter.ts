@@ -60,19 +60,19 @@ export class Typewriter extends Widget {
 
   /** Advance the reveal head by `speed` characters. No-op once fully revealed. */
   tick(): void {
-      const len = Array.from(segmenter.segment(this._text)).length;
-  
-      if (prefersReducedMotion()) {
-          if (this._revealed >= len) return;
-          this._revealed = len;
-          this.markDirty();
-          return;
-      }
-  
+    const len = Array.from(segmenter.segment(this._text)).length;
+
+    if (prefersReducedMotion()) {
       if (this._revealed >= len) return;
-  
-      this._revealed = Math.min(this._revealed + this._speed, len);
+      this._revealed = len;
       this.markDirty();
+      return;
+    }
+
+    if (this._revealed >= len) return;
+
+    this._revealed = Math.min(this._revealed + this._speed, len);
+    this.markDirty();
   }
 
   /** Return the reveal counter to zero. */
