@@ -194,17 +194,17 @@ describe('DataGrid', () => {
     
     it('up and down keys move the selected row', () => {
         const grid = new DataGrid(COLUMNS, ROWS);
-    
-        expect((grid as any)._selectedRow).toBe(0);
-    
+
+        expect(grid.selectedRow).toBe(0);
+
         grid.handleKey(keyOf('down'));
-        expect((grid as any)._selectedRow).toBe(1);
-    
+        expect(grid.selectedRow).toBe(1);
+
         grid.handleKey(keyOf('down'));
-        expect((grid as any)._selectedRow).toBe(2);
-    
+        expect(grid.selectedRow).toBe(2);
+
         grid.handleKey(keyOf('up'));
-        expect((grid as any)._selectedRow).toBe(1);
+        expect(grid.selectedRow).toBe(1);
     });
 
 });

@@ -102,6 +102,10 @@ export class Table extends Widget {
         this._onStateChange = onStateChange;
     }
 
+    // ── Public API ────────────────────────────────────
+
+    get selectedRow(): number { return this._selectedRow; }
+
     // ── Mutations ─────────────────────────────────────
 
     setRows(rows: TableRow[]): void {
