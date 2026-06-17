@@ -93,3 +93,5 @@ export * as ansi from './utils/ansi.js';
 export { writeClipboard, readClipboard, clipboard } from './utils/ansi.js';
 export { debounce } from './utils/debounce.js';
 export type { DebounceOptions } from './utils/debounce.js';
+export { throttle } from './utils/throttle.js';
+export type { ThrottleOptions } from './utils/throttle.js';
