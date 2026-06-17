@@ -30,6 +30,8 @@ export type { ToolCallOptions, ToolApprovalOptions, ToolCallStatus } from './dis
 export { Canvas } from './display/Canvas.js';
 export { Rating } from './display/Rating.js';
 export type { RatingOptions } from './display/Rating.js';
+export { FPSCounter } from './display/FPSCounter.js';
+export type { FPSCounterOptions } from './display/FPSCounter.js';
 export { Pty } from './display/Pty.js';
 export type { PtyOptions } from './display/Pty.js';
 export { PerformanceOverlay } from './display/PerformanceOverlay.js';
