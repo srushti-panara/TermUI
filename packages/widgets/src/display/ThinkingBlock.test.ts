@@ -61,13 +61,13 @@ describe('ThinkingBlock', () => {
             motion,
             'timerPoolSubscribe',
         );
-    
+
         const block = new ThinkingBlock();
         block.setStreaming(true);
         block.mount();
         expect(timerSpy).not.toHaveBeenCalled();
     });
-    
+
     it('uses ASCII borders when caps.unicode is false', () => {
         const originalUnicode = caps.unicode;
         Object.defineProperty(caps, 'unicode', {
