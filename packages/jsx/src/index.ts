@@ -103,6 +103,8 @@ export type { UseStopwatchOptions, UseStopwatchControls } from './hooks/useStopw
 export { useBell } from './hooks/useBell.js';
 export { useCountdown } from './hooks/useCountdown.js';
 export type { UseCountdownOptions, UseCountdownControls } from './hooks/useCountdown.js';
+export { usePackageManager, detectPackageManager, getPackageManagerCommands } from './hooks/usePackageManager.js';
+export type { PackageManager, PackageManagerCommands } from './hooks/usePackageManager.js';
 export { useSet } from './hooks/useSet.js';
 export type { UseSetActions } from './hooks/useSet.js';
 export { useThrottle } from './hooks/useThrottle.js';
