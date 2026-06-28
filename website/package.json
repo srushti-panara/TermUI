@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3000",
-    "prebuild": "bun ../scripts/build-registry.ts",
+    "prebuild": "bun ../scripts/build-registry.ts && node scripts/generate-llm-docs.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"

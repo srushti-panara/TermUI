@@ -1,0 +1,712 @@
+# TermUI
+
+> TermUI is a TypeScript framework for building terminal user interfaces (TUIs). It ships 15 packages, 230 components, MIT license, Node.js 18+, and zero C extensions. You get a JSX runtime, flexbox layout, CSS-like theming, spring animations, screen routing, Zustand-style global state, and a full test renderer. All pure TypeScript. Unlike Ink (which depends on React), TermUI uses its own JSX runtime with no React dependency.
+
+TermUI runs on Node.js 18 or later. Install with npm, pnpm, or yarn. No native bindings.
+
+Packages:
+- @termuijs/core — screen buffer, input parsing, event system, layout engine
+- @termuijs/widgets — Box, Text, Table, ProgressBar, Spinner, Gauge, VirtualList
+- @termuijs/ui — Select, Tabs, Modal, Toast, Tree, MultiSelect
+- @termuijs/jsx — JSX runtime, useState, useEffect, useContext, memo, useAsync
+- @termuijs/tss — Terminal Style Sheets (CSS-like theming with variables and selectors)
+- @termuijs/router — screen routing with dynamic params and history
+- @termuijs/motion — spring physics and easing-based transitions
+- @termuijs/store — Zustand-style global state with selector subscriptions
+- @termuijs/data — system monitoring: CPU, memory, disk, network, processes
+- @termuijs/quick — rapid prototyping with reactive values and layout helpers
+- @termuijs/testing — in-memory test renderer compatible with Vitest and Jest
+- @termuijs/dev-server — hot-reload dev server (restarts in under 200ms)
+- create-termui-app — project scaffolding CLI
+
+The JSX runtime (@termuijs/jsx) is independent of React. It provides useState, useEffect, useContext, useAsync, and memo() without any browser-targeted abstractions.
+
+---
+
+## Installation
+
+```bash
+# Scaffold a new project
+npx create-termui-app my-app
+cd my-app
+npm run dev
+
+# Or add to an existing project
+npm install @termuijs/core
+npm install @termuijs/widgets    # Box, Text, Table, ProgressBar, VirtualList
+npm install @termuijs/ui         # Select, Tabs, Modal, Toast, Tree
+npm install @termuijs/jsx        # JSX runtime, hooks, context, memo
+npm install @termuijs/tss        # Terminal Style Sheets (theming)
+npm install @termuijs/router     # Screen routing with dynamic params
+npm install @termuijs/motion     # Spring and easing animations
+npm install @termuijs/store      # Zustand-style global state
+npm install @termuijs/data       # System monitoring (CPU, memory, disk, network)
+npm install @termuijs/quick      # Rapid prototyping helpers
+npm install --save-dev @termuijs/testing    # In-memory test renderer
+npm install --save-dev @termuijs/dev-server # Hot-reload dev server
+```
+
+**Prerequisites:** Node.js 18+ (LTS recommended). A terminal with 256-color support.
+
+### Verify it works
+
+```ts
+import { App, Screen } from '@termuijs/core'
+import { Box, Text } from '@termuijs/widgets'
+
+const root = new Box({ border: 'round', padding: 1 })
+root.addChild(new Text('Hello from TermUI!'))
+
+const app = new App(root, { fullscreen: true })
+await app.mount()
+```
+
+Run with: `npx tsx index.ts`. Press Ctrl+C to exit.
+
+---
+
+## Quick Start
+
+### Hello world
+
+```ts
+import { App } from '@termuijs/core'
+import { Box, Text } from '@termuijs/widgets'
+
+const root = new Box({ border: 'round', padding: 1 })
+root.addChild(new Text('Hello, TermUI!'))
+
+const app = new App(root, { fullscreen: true })
+await app.mount()
+
+// Output:
+// ╭─────────────────────╮
+// │ Hello, TermUI!       │
+// ╰─────────────────────╯
+```
+
+### Keyboard input
+
+```ts
+import { App } from '@termuijs/core'
+import { Box, Text } from '@termuijs/widgets'
+
+let count = 0
+const label = new Text('Counter: 0')
+const hint  = new Text('Press up/down to change, q to quit', { dim: true })
+
+const root = new Box({ border: 'round', padding: 1, flexDirection: 'column' })
+root.addChild(label)
+root.addChild(hint)
+
+const app = new App(root, { fullscreen: true })
+
+app.events.on('key', (event) => {
+    if (event.key === 'up')   { count++; label.setContent('Counter: ' + count); app.requestRender() }
+    if (event.key === 'down') { count--; label.setContent('Counter: ' + count); app.requestRender() }
+    if (event.key === 'q')    app.exit()
+})
+
+await app.mount()
+```
+
+### JSX with useState
+
+```tsx
+import { Box, Text } from '@termuijs/widgets'
+import { useState, useInput } from '@termuijs/jsx'
+import { App } from '@termuijs/core'
+
+function Counter() {
+  const [count, setCount] = useState(0)
+  useInput((key) => {
+    if (key === '+') setCount((c) => c + 1)
+    if (key === 'q') process.exit(0)
+  })
+  return (
+    <Box border="round" padding={1}>
+      <Text>Count: {count}</Text>
+      <Text dim>Press + to increment, q to quit</Text>
+    </Box>
+  )
+}
+
+const app = new App(Counter)
+await app.mount()
+```
+
+### Theming with TSS
+
+```ts
+import { App } from '@termuijs/core'
+import { Box, Text } from '@termuijs/widgets'
+import { ThemeEngine } from '@termuijs/tss'
+
+const engine = new ThemeEngine()
+engine.load(`
+  @theme ocean {
+    --primary: #00d4ff;
+    --bg: #0a0a1a;
+    --border: #1a1a3a;
+  }
+
+  Box {
+    border-color: var(--border);
+  }
+
+  Box:focused {
+    border-color: var(--primary);
+  }
+`)
+engine.setTheme('ocean')
+
+const root = new Box({ border: 'round', padding: 1 })
+root.applyStyles(engine.resolveStyle('Box'))
+
+engine.onChange(() => {
+    root.applyStyles(engine.resolveStyle('Box'))
+    app.requestRender()
+})
+
+const app = new App(root, { fullscreen: true })
+await app.mount()
+```
+
+---
+
+## What is a TUI?
+
+A TUI (terminal user interface) runs inside a terminal emulator and renders a persistent, interactive interface using text and ANSI escape codes. Unlike a one-shot CLI command, a TUI stays open, responds to keyboard input in real time, and updates parts of the screen without redrawing everything.
+
+Examples: `htop`, `lazygit`, `vim`, `ncdu`, `k9s`.
+
+### TUI vs CLI
+
+| | CLI | TUI |
+|---|---|---|
+| Output | Scrolling lines | Persistent, redrawn UI |
+| Interaction | Arguments and flags | Keyboard navigation, forms |
+| Rendering | stdout lines | ANSI cell grid |
+| Use case | One-shot commands | Dashboards, editors, file managers |
+
+### How a TUI renders
+
+TUIs use ANSI escape codes to move the cursor, set colors, and clear regions. A double-buffered renderer compares the previous frame with the new one and writes only the changed cells. This enables 60fps updates without flickering.
+
+```
+ESC[2J       clear screen
+ESC[1;1H     move cursor to row 1, col 1
+ESC[32m      set foreground to green
+ESC[0m       reset all attributes
+```
+
+In TermUI, `@termuijs/core` handles all of this. The `Screen` class manages the double buffer. The `Renderer` writes the diff. `InputParser` decodes raw stdin bytes into typed `KeyEvent` objects.
+
+### TypeScript TUI frameworks compared
+
+| Framework | JSX | Router | Theming | Animations | Hot reload |
+|---|---|---|---|---|---|
+| TermUI | Own runtime | Yes | TSS (CSS-like) | Spring + easing | Yes, under 200ms |
+| Ink | React | No | Inline styles | No | No |
+| Blessed | No | No | Manual | No | No |
+
+TermUI ships 15 packages and 230 components with zero C extensions. Ink reuses React directly. Blessed is JavaScript-only with no JSX.
+
+---
+
+## Core Package (@termuijs/core)
+
+Everything in TermUI sits on top of `@termuijs/core`. It handles the screen buffer, input decoding, layout computation, style data, events, and the application lifecycle.
+
+### Exports
+
+| Export | What it does |
+|---|---|
+| `App` | Wires terminal, input, screen, and render loop together |
+| `Screen` | Double-buffered cell grid with diff-based rendering |
+| `Renderer` | Diffs screen buffers and flushes changes to stdout |
+| `Terminal` | Raw mode, alt screen, cursor control, resize events |
+| `InputParser` | Decodes raw stdin bytes into key and mouse events |
+| `EventEmitter` | Type-safe publish/subscribe |
+| `FocusManager` | Tab-order focus cycling across widgets |
+| `createLayoutNode / computeLayout` | Flexbox-inspired layout engine |
+| `defaultStyle / mergeStyles` | Style objects: colors, bold, dim, underline |
+| `parseColor` | Named, hex, and RGB color parsing |
+| `stringWidth / truncate / wordWrap` | Unicode-aware string measurement and wrapping |
+
+### Quick example
+
+```ts
+import { App } from '@termuijs/core'
+import { Box, Text } from '@termuijs/widgets'
+
+const root = new Box({ border: 'round', padding: 1 })
+root.addChild(new Text('Hello, TermUI!', { bold: true }))
+
+const app = new App(root)
+
+app.events.on('key', (event) => {
+    if (event.key === 'q') app.exit()
+})
+
+await app.mount()
+```
+
+### How other packages use core
+
+- `@termuijs/widgets` renders into the Screen buffer and uses the layout engine for positioning
+- `@termuijs/tss` builds on top of the Style interface, adding CSS-like variables and themes
+- `@termuijs/router` plugs into the App lifecycle for screen transitions
+- `@termuijs/motion` animates style properties through the render loop
+
+---
+
+## Widgets Package (@termuijs/widgets)
+
+Every widget extends the base `Widget` class, manages its own render rectangle, and only repaints when something actually changes.
+
+### All widgets
+
+| Widget | Category | Description |
+|---|---|---|
+| `Box` | Display | Container with borders, padding, and flex layout |
+| `Text` | Display | Styled text with color, bold, italic, dim, underline |
+| `LogView` | Display | Scrollable log panel with auto-scroll and max buffer |
+| `Table` | Data | Data table with column alignment and headers |
+| `Gauge` | Data | Percentage indicator with label and color thresholds |
+| `Sparkline` | Data | Inline bar chart for time-series data |
+| `BarChart` | Data | Horizontal or vertical bar chart with groups |
+| `StatusIndicator` | Data | Color-coded status dot (ok / warn / error / unknown) |
+| `ProgressBar` | Feedback | Horizontal progress indicator with customizable fill |
+| `Spinner` | Feedback | Animated loading spinner with multiple styles |
+| `Scrollbar` | Feedback | Standalone scrollbar indicator (vertical or horizontal) |
+| `List` | Input | Keyboard-navigable list for small datasets |
+| `TextInput` | Input | Single-line text input with cursor and placeholder |
+| `VirtualList` | Input | Scroll-virtualized list; renders only visible rows, any dataset size |
+
+### Dashboard example
+
+```ts
+import { App } from '@termuijs/core'
+import { Box, Text, ProgressBar, Spinner } from '@termuijs/widgets'
+
+const title = new Text('Dashboard', { bold: true, fg: 'cyan' })
+const spinner = new Spinner({ type: 'dots', fg: 'green' })
+const cpuBar = new ProgressBar({ value: 0.73, width: 30, fg: 'green' })
+
+const root = new Box({ border: 'round', padding: 1, flexDirection: 'column', gap: 1 })
+root.addChild(title)
+root.addChild(spinner)
+root.addChild(cpuBar)
+
+const app = new App(root, { fullscreen: true })
+await app.mount()
+// ╭──────────────────────────────────╮
+// │ Dashboard                        │
+// │ ⠋                               │
+// │ ████████████████████░░░░░ 73%    │
+// ╰──────────────────────────────────╯
+```
+
+### VirtualList: handle any dataset size
+
+`VirtualList` renders only the rows visible in the viewport. A list of 1,000,000 items renders as fast as a list of 10.
+
+```ts
+import { VirtualList } from '@termuijs/widgets'
+
+const list = new VirtualList({
+    totalItems: 1_000_000,
+    renderItem: (index) => `Log line ${index}: some message content`,
+    onSelect:   (index) => console.log('Selected:', index),
+})
+
+app.events.on('key', (e) => {
+    if (e.key === 'up')    list.selectPrev()
+    if (e.key === 'down')  list.selectNext()
+    if (e.key === 'enter') list.confirm()
+    if (e.key === 'home')  list.selectFirst()
+    if (e.key === 'end')   list.selectLast()
+})
+```
+
+### Status dashboard pattern
+
+```ts
+import { Box, StatusIndicator, ProgressBar, Gauge } from '@termuijs/widgets'
+
+const apiStatus = new StatusIndicator({ status: 'ok', label: 'API' })
+const dbStatus  = new StatusIndicator({ status: 'warn', label: 'DB' })
+
+const statusRow = new Box({ flexDirection: 'row', gap: 4 })
+statusRow.addChild(apiStatus)
+statusRow.addChild(dbStatus)
+
+const cpuBar  = new ProgressBar({ value: 0.72, label: 'CPU', width: 40, fg: 'green' })
+const memBar  = new ProgressBar({ value: 0.58, label: 'MEM', width: 40, fg: 'cyan' })
+const diskGauge = new Gauge({ value: 0.45, label: 'Disk' })
+```
+
+### Log viewer pattern
+
+```ts
+import { LogView } from '@termuijs/widgets'
+
+const logs = new LogView({ maxLines: 1000, autoScroll: true })
+
+logs.append({ text: '[INFO]  Server started', color: 'green' })
+logs.append({ text: '[WARN]  Memory usage high', color: 'yellow' })
+logs.append({ text: '[ERROR] Connection reset', color: 'red' })
+```
+
+### Data table pattern
+
+```ts
+import { Table } from '@termuijs/widgets'
+
+const table = new Table({
+    columns: [
+        { key: 'pid',  header: 'PID',     width: 8 },
+        { key: 'name', header: 'Process',  width: 20 },
+        { key: 'cpu',  header: 'CPU%',     width: 8, align: 'right' },
+        { key: 'mem',  header: 'Memory',   width: 10 },
+    ],
+    rows: processes,
+})
+```
+
+---
+
+## TSS: Terminal Style Sheets (@termuijs/tss)
+
+CSS-like theming for terminal apps. Define variables in named themes, write selectors with pseudo-classes, and swap themes at runtime without restarting.
+
+### Syntax
+
+```css
+@theme default {
+  --primary: #00ff88;
+  --bg: #0a0a0f;
+  --text: #e8e8f0;
+  --border: #2a2a45;
+}
+
+.container {
+  border-color: var(--border);
+  padding: 1;
+}
+
+.container:focused {
+  border-color: var(--primary);
+}
+```
+
+### Selector types
+
+| Selector | Matches |
+|---|---|
+| `.name` | Widget with `className="name"` |
+| `Box` | All Box widget instances |
+| `Box > Text` | Text that is a direct child of Box |
+| `.panel Text` | Text anywhere inside `.panel` |
+| `.btn:hover` | Widget in hover state |
+| `.btn:focused` | Widget with keyboard focus |
+| `.btn:disabled` | Widget with `disabled: true` |
+| `.btn:active` | Widget being pressed |
+
+### ThemeEngine API
+
+```ts
+import { ThemeEngine } from '@termuijs/tss'
+
+const engine = new ThemeEngine()
+engine.load(tssString)
+engine.loadAll([baseTheme, customOverrides])
+engine.setTheme('cyberpunk')
+engine.getVariable('--primary')  // → '#ff00ff'
+
+const styles = engine.resolveStyle('.container', { focused: true })
+widget.applyStyles(styles)
+
+engine.onChange(() => {
+    widget.applyStyles(engine.resolveStyle('.container'))
+    app.requestRender()
+})
+```
+
+### Built-in themes
+
+Six themes ship with the package:
+
+| Theme | Description |
+|---|---|
+| `default` | Dark background with green accents |
+| `cyberpunk` | Neon pink and purple on dark |
+| `nord` | Arctic, muted blues and grays |
+| `dracula` | Dark with pastel accents |
+| `catppuccin` | Warm pastel palette |
+| `solarized` | Ethan Schoonover's solarized colors |
+
+```ts
+import { BUILTIN_THEMES } from '@termuijs/tss'
+engine.load(BUILTIN_THEMES.default)
+```
+
+---
+
+## Store Package (@termuijs/store)
+
+Global state for terminal apps. Zustand-style: create a store with a creator function, subscribe to slices in your components, update from anywhere. No context wrappers. No prop chains.
+
+### Quick example
+
+```ts
+import { createStore } from '@termuijs/store'
+import { useInput } from '@termuijs/jsx'
+import { Box, Text } from '@termuijs/widgets'
+
+const useCounter = createStore((set) => ({
+    count: 0,
+    increment: () => set((s) => ({ count: s.count + 1 })),
+    decrement: () => set((s) => ({ count: s.count - 1 })),
+    reset:     () => set({ count: 0 }),
+}))
+
+function Counter() {
+    const count     = useCounter((s) => s.count)
+    const increment = useCounter((s) => s.increment)
+    const decrement = useCounter((s) => s.decrement)
+
+    useInput((key) => {
+        if (key === 'up')   increment()
+        if (key === 'down') decrement()
+        if (key === 'r')    useCounter.getState().reset()
+    })
+
+    return (
+        <Box border="round" padding={1}>
+            <Text bold>Count: {count}</Text>
+            <Text dim>up  down  r reset</Text>
+        </Box>
+    )
+}
+```
+
+### Reading and writing outside components
+
+```ts
+// One-off read
+const current = useCounter.getState()
+
+// Update from a timer or event handler
+setInterval(() => {
+    useNetStore.setState((s) => ({ requestCount: s.requestCount + 1 }))
+}, 5000)
+
+// Subscribe without JSX
+const unsub = useCounter.subscribe((state, prev) => {
+    if (state.count !== prev.count) console.log('count changed:', state.count)
+})
+unsub()
+```
+
+### Async actions
+
+```ts
+const useDataStore = createStore((set, get) => ({
+    items: [] as Item[],
+    loading: false,
+    error: null as string | null,
+
+    fetch: async () => {
+        set({ loading: true, error: null })
+        try {
+            const items = await fetchItems()
+            set({ items, loading: false })
+        } catch (err) {
+            set({ error: (err as Error).message, loading: false })
+        }
+    },
+}))
+```
+
+### Store API reference
+
+| Method | Description |
+|---|---|
+| `createStore(creator)` | Create a store. Returns a hook with selector support. |
+| `useStore()` | Subscribe to the full state |
+| `useStore(selector)` | Subscribe to a derived slice |
+| `useStore.getState()` | Read state without subscribing |
+| `useStore.setState(partial)` | Update state from outside a component |
+| `useStore.subscribe(listener)` | Listen for changes, returns an unsubscribe function |
+| `useStore.destroy()` | Remove all subscribers (call in test cleanup) |
+
+---
+
+## Testing Package (@termuijs/testing)
+
+Renders TermUI JSX trees into an in-memory screen buffer. No real terminal needed. Follows the render, query, assert pattern of React Testing Library.
+
+Compatible with Vitest and Jest.
+
+### Quick start
+
+```ts
+import { describe, it, expect } from 'vitest'
+import { render } from '@termuijs/testing'
+import { useState, useInput } from '@termuijs/jsx'
+import { Text } from '@termuijs/widgets'
+
+function Counter() {
+    const [count, setCount] = useState(0)
+    useInput((key) => {
+        if (key === '+') setCount((c) => c + 1)
+        if (key === '-') setCount((c) => c - 1)
+    })
+    return <Text>Count: {count}</Text>
+}
+
+describe('Counter', () => {
+    it('starts at zero', () => {
+        const t = render(<Counter />)
+        expect(t.getByText('Count: 0')).toBeTruthy()
+        t.unmount()
+    })
+
+    it('increments on +', () => {
+        const t = render(<Counter />)
+        t.fireKey('+')
+        expect(t.getByText('Count: 1')).toBeTruthy()
+        t.unmount()
+    })
+})
+```
+
+### Key events
+
+```ts
+t.fireKey('enter')
+t.fireKey('escape')
+t.fireKey('up')
+t.fireKey('down')
+t.fireKey('c', { ctrl: true })    // Ctrl+C
+t.fireKey('a', { shift: true })   // Shift+A
+t.fireKey('f', { alt: true })     // Alt+F
+t.typeText('hello world')         // fires each character separately
+```
+
+### Snapshot testing
+
+```ts
+it('renders the dashboard layout', () => {
+    const t = render(<Dashboard />)
+    expect(t.lastFrame()).toMatchSnapshot()
+    t.unmount()
+})
+
+// Snapshot:
+// [
+//   "┌────────────────────────────────┐",
+//   "│ System Dashboard               │",
+//   "│ CPU ████████░░ 72%             │",
+//   "└────────────────────────────────┘",
+// ]
+```
+
+### Testing API reference
+
+| Method | Description |
+|---|---|
+| `render(el, opts?)` | Render into a virtual screen. Returns TestInstance. |
+| `t.getByText(text)` | Find first matching widget, or null |
+| `t.getAllByText(text)` | Find all widgets containing the text |
+| `t.getAllByType(Type)` | Find all widgets of a constructor |
+| `t.lastFrame()` | Screen rows as string[] |
+| `t.toString()` | Screen as a single string |
+| `t.fireKey(key, mods?)` | Simulate a key press |
+| `t.typeText(text)` | Type characters one by one |
+| `t.rerender(el?)` | Re-render, optionally with new element |
+| `t.unmount()` | Clean up all component state |
+
+### Store cleanup in tests
+
+```ts
+import { afterEach } from 'vitest'
+import { useCounterStore } from './store'
+
+afterEach(() => {
+    useCounterStore.destroy()
+})
+```
+
+---
+
+## Frequently Asked Questions
+
+### What is TermUI?
+
+TermUI is a TypeScript framework for building terminal user interfaces (TUIs). It gives you JSX, a component model, theming, animations, routing, and state management — all for the terminal instead of the browser.
+
+### What is a TUI?
+
+A TUI (terminal user interface) is an interactive application that renders a persistent, navigable UI inside a terminal emulator using ANSI escape codes. Unlike a CLI (which runs once and exits), a TUI takes over the terminal and responds to keyboard input in real time.
+
+### How is TermUI different from Ink?
+
+TermUI uses its own JSX runtime with no React dependency. It ships a router, CSS-like theming (TSS), spring animations, Zustand-style global state, and a hot-reload dev server. Ink reuses React directly and provides minimal extras. TermUI is also zero C extensions — pure TypeScript, runs anywhere Node runs.
+
+### Does TermUI require React?
+
+No. TermUI uses `@termuijs/jsx`, its own JSX runtime. You get useState, useEffect, useContext, useAsync, and memo() with no React dependency and no browser abstractions.
+
+### What Node.js version does TermUI require?
+
+Node.js 18 or later. LTS recommended.
+
+### How do I install TermUI?
+
+```bash
+npx create-termui-app my-app
+```
+
+Or add packages directly: `npm install @termuijs/core @termuijs/widgets @termuijs/jsx`
+
+### How do I test a TermUI app?
+
+Install `@termuijs/testing` and render your components into an in-memory screen. Use `getByText()`, `fireKey()`, and `lastFrame()` to query and assert. Works with Vitest and Jest. No terminal required.
+
+### What terminals does TermUI support?
+
+Any terminal emulator with ANSI escape code support: iTerm2, Kitty, Alacritty, Windows Terminal, GNOME Terminal, tmux, and SSH sessions. TermUI requires 256-color support (standard since 2010).
+
+### Can I use TermUI for a system monitoring dashboard?
+
+Yes. `@termuijs/data` provides live CPU, memory, disk, network, and process data. Pair it with Gauge, ProgressBar, Sparkline, and Table widgets to build an htop-style dashboard.
+
+### How many packages does TermUI have?
+
+15 packages: core, widgets, ui, jsx, tss, router, motion, store, data, adapters, quick, testing, dev-server, cli, and create-termui-app.
+
+### Is TermUI MIT licensed?
+
+Yes. TermUI is MIT licensed.
+
+### Where is the source code?
+
+https://github.com/Karanjot786/TermUI
+
+---
+
+## Optional
+
+- [Quick package (@termuijs/quick)](https://termui.io/docs/guides/quick): Rapid prototyping with reactive() values and App.builder(). Build a working app in about 10 lines.
+- [Screen API](https://termui.io/docs/core/screen): Double-buffer internals, cell grid access, manual ANSI flush, 2ms repaint benchmark.
+- [InputParser API](https://termui.io/docs/core/input-parser): Full ANSI sequence table, KeyEvent and MouseEvent types, modifier key combinations.
+- [EventEmitter API](https://termui.io/docs/core/event-emitter): Typed event maps, once(), off(), async emit patterns.
+- [Layout engine](https://termui.io/docs/core/layout): All flexbox properties (direction, wrap, gap, align-items, justify-content, grow, shrink). No Yoga dependency.
+- [Motion springs](https://termui.io/docs/motion/springs): createSpring(), stiffness, damping, mass configuration vs duration-based easing.
+- [Motion transitions](https://termui.io/docs/motion/transitions): 12 named easing curves, Router pairing for screen transitions.
+- [Router](https://termui.io/docs/router/overview): addRoute(), typed params, navigation guards, onEnter/onLeave hooks.
+- [Dev server](https://termui.io/docs/guides/dev-server): Hot reload under 200ms, watch globs, pre-restart hooks.
+- [Unicode utilities](https://termui.io/docs/core/unicode): stringWidth() for CJK and emoji, multi-byte truncation, grapheme cluster handling.

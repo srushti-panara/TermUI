@@ -1,0 +1,109 @@
+# TermUI
+
+> TypeScript framework for building terminal user interfaces.
+> 15 packages, 230 components, MIT license, Node.js 18+, zero C extensions.
+> Own JSX runtime (no React dependency). Flexbox layout, CSS-like theming,
+> spring animations, history-based routing, Zustand-style state, hot-reload dev server.
+> Unlike Ink (which depends on React), TermUI ships its own JSX runtime.
+
+Install with `npx create-termui-app my-app`, add a component with `npx termuijs add spinner`, or add a package directly with `npm install @termuijs/core`.
+
+The 15 packages are: `@termuijs/core`, `@termuijs/widgets`, `@termuijs/ui`, `@termuijs/jsx`, `@termuijs/store`, `@termuijs/tss`, `@termuijs/router`, `@termuijs/motion`, `@termuijs/data`, `@termuijs/adapters`, `@termuijs/testing`, `@termuijs/dev-server`, `@termuijs/quick`, `@termuijs/cli`, and `create-termui-app`.
+
+- [Full Documentation](https://termui.io/llms-full.txt): Complete reference with code examples and FAQ in one file.
+
+## Getting Started
+
+- [Architecture](https://termui.io/docs/getting-started/architecture.md): TermUI's architecture: a 15-package monorepo where @termuijs/core handles the screen buffer and render pipeline. Widgets, JSX, store, router, motion, TSS, testing, dev-server, and adapters packages layer on top independently.
+- [Installation](https://termui.io/docs/getting-started/installation.md): Install TermUI with bunx create-termui-app or add @termuijs/core directly. Requires Bun 1.3+ for development. Published packages run on Node 18+. Includes 15 packages for building TypeScript terminal apps.
+- [Quick Start](https://termui.io/docs/getting-started/quick-start.md): Build your first TermUI terminal app in under 5 minutes. Covers App setup, Box and Text widgets, keyboard input handling, and JSX-based components with useState and useEffect.
+## Core
+
+- [App Lifecycle](https://termui.io/docs/core/app.md): The TermUI App class bootstraps a terminal UI application: sets raw mode, binds stdin, starts the render loop, manages focus, and calls lifecycle hooks (onStart, onStop, onResize). The single entry point for any @termuijs/core project. Shut down cleanly with app.stop() or Ctrl+C.
+- [Event Emitter](https://termui.io/docs/core/event-emitter.md): TermUI's fully type-safe EventEmitter for pub/sub in terminal apps. Supports typed event maps, wildcard listeners, once(), off(), and async emit. Used internally by App, Router, and widgets. Create your own instances for custom cross-component communication.
+- [Input Parser](https://termui.io/docs/core/input-parser.md): TermUI InputParser decodes raw stdin bytes into structured KeyEvent and MouseEvent objects. Handles ANSI escape sequences for arrow keys, function keys, ctrl/alt/shift modifiers, and mouse click, scroll, and drag events. Used by @termuijs/core App automatically, or wire it manually for custom input pipelines.
+- [Layout Engine](https://termui.io/docs/core/layout.md): TermUI's flexbox-inspired layout engine computes widget positions using flex-direction, justify-content, align-items, gap, padding, margin, and min/max width/height constraints. Runs in pure TypeScript with no Yoga dependency. Used by every widget and box in @termuijs/widgets and @termuijs/ui.
+- [Core Overview](https://termui.io/docs/core/overview.md): @termuijs/core powers all of TermUI. It manages the screen buffer, ANSI input decoding, flexbox layout engine, event emitter, and the App lifecycle, pure TypeScript, no C extensions.
+- [Screen](https://termui.io/docs/core/screen.md): @termuijs/core Screen class: a double-buffered grid of terminal cells. On each frame the Renderer diffs the two buffers and writes only changed cells via ANSI escape codes. Supports 256-color, truecolor, bold, italic, dim, and inverse. A typical 80x24 terminal repaints in under 2ms.
+- [Style & Colors](https://termui.io/docs/core/style.md): ANSI color and style utilities in @termuijs/core. Apply bold, italic, dim, underline, strikethrough, inverse, and 256-color or truecolor foreground/background to terminal text. Supports hex color input, color blending, and TSS integration for theme-level style variables.
+- [String Utilities](https://termui.io/docs/core/unicode.md): String utilities for terminal rendering in @termuijs/core: stringWidth() counts visible columns for wide CJK and emoji characters, truncate() clips to a column limit without breaking multi-byte sequences, wordWrap() reflows text at a given width, and stripAnsi() removes ANSI escape codes.
+## JSX
+
+- [Context API](https://termui.io/docs/jsx/context.md): TermUI Context API: share state across a JSX component tree without prop drilling. Create a typed context with createContext(), wrap children in a Provider, and read the value with useContext() at any depth. Works like React context but renders to the terminal via @termuijs/jsx.
+- [ErrorBoundary](https://termui.io/docs/jsx/error-boundary.md): ErrorBoundary catches runtime errors in TermUI component trees. Instead of crashing the whole app, it renders a fallback UI. Works like React's class-based ErrorBoundary but for the TermUI fiber system.
+- [Focus Management](https://termui.io/docs/jsx/focus.md): TermUI's focus system provides useFocusManager, useFocus, useFocusTrap, and useKeyboardNavigation hooks. Manage keyboard focus across widgets, trap Tab inside modals, and navigate lists with arrow keys, all with clean unmount cleanup.
+- [Hooks Overview](https://termui.io/docs/jsx/hooks-overview.md): Reference for the hooks in @termuijs/jsx, grouped by category.
+- [memo() & Batched Updates](https://termui.io/docs/jsx/memo.md): memo() in @termuijs/jsx skips re-renders when props are shallowly equal. Batched updates collapse multiple setState calls fired in the same tick into a single re-render. Use both to keep high-frequency terminal UIs at 60fps without manual optimization.
+- [useAsync](https://termui.io/docs/jsx/use-async.md): useAsync() hook in @termuijs/jsx manages async data loading inside terminal components. Returns { data, loading, error, refetch } with automatic state management. Use for fetching API data, reading files, or any async operation that should trigger a re-render when it resolves.
+- [useInput](https://termui.io/docs/jsx/use-input.md): useInput handles raw keyboard input in @termuijs/jsx components. Receive every keypress as a string plus a KeyEvent object with modifier flags. For declarative bindings use useKeymap; for list navigation use useKeyboardNavigation.
+- [useKeymap](https://termui.io/docs/jsx/use-keymap.md): useKeymap is a TermUI hook for declarative keyboard shortcuts. Map key combos to handlers per component, with automatic cleanup on unmount. Supports ctrl+, alt+, shift+ modifiers and chaining multiple useKeymap calls.
+- [useMotion](https://termui.io/docs/jsx/use-motion.md): useMotion is a TermUI hook that reads the NO_MOTION environment flag. Use it to skip animations for users who prefer reduced motion, CI environments, screen readers, or any NO_MOTION=1 setting.
+## Widgets
+
+- [Chart widgets package](https://termui.io/docs/widgets/charts-package.md): There is no separate @termuijs/charts package. The chart widgets (LineChart, AreaChart, PieChart, BarChart, and more) ship inside @termuijs/widgets. Import them from there.
+- [Chart Widgets](https://termui.io/docs/widgets/charts.md): TermUI chart widgets in @termuijs/widgets: BarChart for grouped bar charts, Sparkline for inline trends, LineChart for ASCII line plots, AreaChart, PieChart, HeatMap, and more. All respect caps.unicode for CI-safe rendering.
+- [Display Widgets](https://termui.io/docs/widgets/display.md): TermUI's display widgets cover AI and streaming UI patterns: StreamingText for typewriter effects, ChatMessage for role-aware chat bubbles, ToolCall for AI function call display, JSONView for collapsible JSON trees, DiffView for unified diffs, BigText for ASCII banners, and Gradient for rainbow text.
+- [Feedback Widgets](https://termui.io/docs/widgets/feedback.md): TermUI feedback widgets: Spinner for animated loading indicators, ProgressBar for determinate progress, Skeleton for loading placeholders, MultiProgress for multiple bars, CommandPalette for searchable command menus. All respect caps.motion and caps.unicode.
+- [Input Widgets](https://termui.io/docs/widgets/inputs.md): Numeric, text, and date input widgets from @termuijs/widgets: RangeInput, Knob, PinInput, and Calendar.
+- [Layout Widgets](https://termui.io/docs/widgets/layout.md): TermUI's layout widgets: Card for bordered containers with titles, ScrollView for scrollable content, Center for centering children, Columns for evenly-split columns, Sidebar for navigation panels, KeyValue for key/value pairs, Definition for term/definition pairs, Banner and StatusMessage for alerts.
+- [Widgets Overview](https://termui.io/docs/widgets/overview.md): TermUI widget library: Box, Text, Table, ProgressBar, Spinner, Gauge, VirtualList, DataGrid, Calendar, Markdown, and 60+ more. Each widget extends the base Widget class and only repaints when its data changes. VirtualList renders 1,000,000+ items with no performance hit.
+- [VirtualList](https://termui.io/docs/widgets/virtual-list.md): VirtualList renders only the rows visible in the terminal viewport regardless of total list size. 1,000,000-item lists scroll at the same frame rate as 10-item lists. Supports keyboard navigation (up/down/page/home/end), custom row heights, sticky headers, and a renderRow callback for full JSX row control.
+## UI Components
+
+- [Specialized Inputs](https://termui.io/docs/ui/inputs.md): TermUI's @termuijs/ui package includes PasswordInput with masking, NumberInput with arrow key stepping, PathInput with Tab-completion, and KeyboardShortcuts for rendering key binding reference cards in your terminal app.
+- [Notifications](https://termui.io/docs/ui/notifications.md): TermUI's NotificationCenter and useNotifications hook give your terminal app non-blocking toast notifications. Show info, success, warning, and error messages that auto-dismiss after a configurable duration.
+- [UI Components Overview](https://termui.io/docs/ui/overview.md): @termuijs/ui provides 30+ interactive terminal components including Select, Tabs, Modal, Toast, Drawer, Wizard, RadioGroup, TreeSelect, MenuBar, and more. Each manages its own keyboard navigation and focus ring. Built on @termuijs/widgets and styled through @termuijs/tss.
+- [Imperative Prompts](https://termui.io/docs/ui/prompts.md): TermUI's prompt API provides async text, confirm, and select dialogs for CLI scripts. Each method takes an options object with a message, await prompt.confirm({ message }) anywhere in your code.
+## TSS (Theming)
+
+- [TSS Overview](https://termui.io/docs/tss/overview.md): Terminal Style Sheets (TSS) bring CSS-like theming to Node.js terminal apps. Define named themes with CSS custom property syntax, write widget selectors with pseudo-classes, nest rules with & combinators, use calc() expressions, import partials with @import, and switch themes at runtime. Works across all TermUI widgets and components.
+- [Built-in Themes](https://termui.io/docs/tss/themes.md): TermUI ships 12 built-in TSS themes: default, cyberpunk, nord, dracula, gruvbox, catppuccin, solarized, tokyo-night, solarizedLight, highContrast, everforest, and rose-pine. Switch themes at runtime with useTheme(), detect the terminal's color scheme with AutoThemeProvider, and build custom themes on top of the same CSS-variable system.
+- [Theme Tokens](https://termui.io/docs/tss/tokens.md): ThemeTokens in @termuijs/tss are plain JavaScript objects mapping CSS variable names to color values. Use them to read theme colors programmatically, or convert them to TSS strings with tokensToTSS() for use with the ThemeEngine.
+## Router
+
+- [Navigation Guards](https://termui.io/docs/router/guards.md): Block or redirect navigation before a screen loads using beforeEnter and afterEnter hooks on your routes.
+- [Router Hooks](https://termui.io/docs/router/hooks.md): React hooks for reading route params, navigating, and accessing route metadata from inside TermUI screen components.
+- [Router Overview](https://termui.io/docs/router/overview.md): @termuijs/router adds file-based screen navigation to TermUI apps. Define routes with typed params, add navigation guards that block transitions until conditions are met, hook into onEnter/onLeave lifecycle events, and animate screen changes with @termuijs/motion transitions.
+- [Query Strings](https://termui.io/docs/router/query-strings.md): Pass and read query parameters in your TermUI routes using push(), replace(), and the useQueryParams hook.
+## Motion
+
+- [Springs](https://termui.io/docs/motion/springs.md): Physics-based spring animations in @termuijs/motion. Describe feel with stiffness, damping, and mass instead of fixed durations. Use createSpring() to animate any numeric value and attach to widget props for fluid terminal motion without frame-rate jitter.
+- [Transitions](https://termui.io/docs/motion/transitions.md): Easing-based transition animations in @termuijs/motion. Choose from linear, easeIn, easeOut, easeInOut, cubicBezier, and 12 other named easings. Pair with @termuijs/router to animate screen enter and exit transitions.
+## Store
+
+- [Store API Reference](https://termui.io/docs/store/api.md): Complete API reference for @termuijs/store: createStore, all hook methods, batch, shallow, computed, and type exports.
+- [Middleware](https://termui.io/docs/store/middleware.md): Intercept and transform state updates in @termuijs/store. Use persist for filesystem state, or write your own middleware.
+- [Store](https://termui.io/docs/store/overview.md): @termuijs/store is TermUI's global state manager. It works like Zustand: create a store, define state and actions, then subscribe with selectors so only the components that need to re-render actually do.
+- [Selectors & Subscriptions](https://termui.io/docs/store/selectors.md): Use selectors to scope component re-renders to exactly the state slice they need. Subscribe outside React with store.subscribe() or store.computed().
+## Data
+
+- [Database](https://termui.io/docs/data/database.md): Check database connectivity and connection pool health for Postgres and MySQL via @termuijs/data.
+- [Docker](https://termui.io/docs/data/docker.md): List containers with live CPU, memory, and network stats via @termuijs/data.
+- [Hooks](https://termui.io/docs/data/hooks.md): Reactive data hooks in @termuijs/data, fetch, WebSocket, SSE, polling, mutation, infinite scroll, and more.
+- [@termuijs/data](https://termui.io/docs/data/overview.md): @termuijs/data provides real-time system metrics for TermUI apps, CPU, memory, disk, network, processes, and HTTP health checks. Use raw collector functions or reactive hooks (useCpu, useMemory, useDisk, useNetwork) that auto-update and clean up on unmount.
+- [System Monitoring](https://termui.io/docs/data/system-monitoring.md): CPU, memory, disk, network, processes, log tailing, and service status via @termuijs/data.
+## Adapters
+
+- [AI & RAG Adapters](https://termui.io/docs/adapters/ai.md): Add AI to TermUI apps with useAI (OpenAI and Anthropic), LocalVectorStore for embedding-based search, and the indexDirectory and chunkText helpers for building a vector store from your own documents.
+- [CLI Tools Adapters](https://termui.io/docs/adapters/cli-tools.md): Integrate command-line tooling into TermUI apps with chalkToTermUI (ANSI pass-through), useExeca (subprocess streaming), and useGit (git operations via simple-git).
+- [Integration Adapters](https://termui.io/docs/adapters/integrations.md): Connect TermUI apps to GitHub (repos, issues, PRs, releases via @octokit/rest), the OS keychain (secrets via keytar), Zod schemas (prompt validation), and .env files (environment variable loading via dotenv).
+- [Adapters Overview](https://termui.io/docs/adapters/overview.md): Connect TermUI apps to external tools, AI providers, filesystems, and services with @termuijs/adapters. Includes adapters for localStorage, conf, AI (OpenAI/Anthropic), vector store, chalk, execa, git, GitHub, keychain, zod, and dotenv.
+- [Storage Adapters](https://termui.io/docs/adapters/storage.md): Persist data across sessions in TermUI apps with useLocalStorage (JSON file store) and useConf (typed config backed by the conf library). Covers API signatures, read/write patterns, and TypeScript types.
+## Testing
+
+- [Testing](https://termui.io/docs/testing/overview.md): @termuijs/testing renders TermUI JSX trees into an in-memory screen buffer without a real terminal. Query with getByText() and getByRole(), fire keyboard events with fireEvent.keyPress(), assert ANSI output, and snapshot test component layout. Compatible with Vitest and Jest.
+## CLI
+
+- [CLI Overview](https://termui.io/docs/cli/overview.md): Add TermUI components to your project from the command line with @termuijs/cli. Run npx termuijs add <name> to copy a component's source and install its dependencies.
+## create-termui-app
+
+- [create-termui-app](https://termui.io/docs/create-termui-app/overview.md): Scaffold a new TermUI project in seconds. Choose a template, pick a theme, and start building.
+## Guides
+
+- [Accessibility & caps Flags](https://termui.io/docs/guides/accessibility.md): TermUI's capability flags (NO_UNICODE, NO_MOTION, NO_COLOR) make terminal apps work correctly in CI pipelines, screen readers, and accessibility tools. Learn how to use the caps object, write ASCII fallbacks, and pass WCAG contrast checks.
+- [Dev Server & Hot Reload](https://termui.io/docs/guides/dev-server.md): @termuijs/dev-server watches TypeScript source files and restarts the TermUI app process in under 200ms on every change. Zero config: run termui dev. Preserves terminal state between restarts. Auto-detects your entry file and renders a full-screen error overlay on crash.
+- [Build Your First App](https://termui.io/docs/guides/first-app.md): Step-by-step tutorial: build a live system monitoring dashboard with TermUI in TypeScript. Covers project setup with create-termui-app, TSS theming, CPU and memory Gauge widgets, a process Table, a log VirtualList with auto-scroll, and Tab/keyboard navigation under 200 lines of code.
+- [@termuijs/quick](https://termui.io/docs/guides/quick.md): @termuijs/quick is TermUI's rapid prototyping API. Use reactive() for observable values that auto-refresh the UI, one-liner widget builders (text, box, table), and a fluent App.builder() chain that skips boilerplate. Go from idea to running terminal app in under 10 lines of TypeScript.
+- [TermUI vs Ink](https://termui.io/docs/guides/termui-vs-ink.md): TermUI vs Ink: a direct comparison of the two TypeScript terminal UI frameworks. Compare theming, routing, state management, animation, hot reload, and testing support.
+- [Testing Guide](https://termui.io/docs/guides/testing.md): How to test TermUI components with @termuijs/testing. Covers unit tests for widgets, integration tests with real keyboard events, testing async data with useAsync, testing global store state, context providers in tests, and snapshot testing with Vitest. Runs headless, no terminal needed.
+- [What is a TUI?](https://termui.io/docs/guides/what-is-a-tui.md): A TUI (terminal user interface) is an interactive application that renders a persistent, navigable UI inside a terminal emulator using ANSI escape codes. Unlike a CLI, a TUI has components, keyboard navigation, and real-time updates without a browser. Learn how TUIs work and how to build one in TypeScript with TermUI.
