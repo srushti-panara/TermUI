@@ -30,6 +30,13 @@ const ROLE_CONFIG: Record<MessageRole, { badge: string; colorName: string }> = {
     tool:      { badge: '[Tool]',      colorName: 'magenta' },
 };
 
+const ROLE_LABELS: Record<MessageRole, string> = {
+    user: 'User message',
+    assistant: 'Assistant message',
+    system: 'System message',
+    tool: 'Tool message',
+};
+
 // ── ChatMessage widget ────────────────────────────────
 
 /**
@@ -51,6 +58,10 @@ export class ChatMessage extends Widget {
         this._content = options.content;
         this._timestamp = options.timestamp;
         this.focusable = false;
+        this.setA11y({
+            role: 'log',
+            label: ROLE_LABELS[this._role],
+        });
     }
 
     /** Update the message content and mark dirty. */
@@ -64,6 +75,10 @@ export class ChatMessage extends Widget {
     setRole(role: MessageRole): void {
         if (this._role === role) return;
         this._role = role;
+        this.setA11y({
+            role: 'log',
+            label: ROLE_LABELS[role],
+        });
         this.markDirty();
     }
 
