@@ -21,41 +21,45 @@ export interface ChatMessageOptions {
     timestamp?: Date;
 }
 
-// ── Role configuration ────────────────────────────────
-
 const ROLE_CONFIG: Record<MessageRole, { badge: string; colorName: string }> = {
-    user:      { badge: '[User]',      colorName: 'cyan' },
+    user: { badge: '[User]', colorName: 'cyan' },
     assistant: { badge: '[Assistant]', colorName: 'green' },
-    system:    { badge: '[System]',    colorName: 'yellow' },
-    tool:      { badge: '[Tool]',      colorName: 'magenta' },
+    system: { badge: '[System]', colorName: 'yellow' },
+    tool: { badge: '[Tool]', colorName: 'magenta' },
 };
 
-// ── ChatMessage widget ────────────────────────────────
+const TIME_FORMAT: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+};
 
-/**
- * ChatMessage — displays a single chat message with a colored role badge
- * and word-wrapped content text.
- *
- * Layout:
- *   Row 0: [Role badge] (colored)   optional timestamp (dim, right-aligned)
- *   Row 1..N: content text, word-wrapped, indented 2 spaces
- */
 export class ChatMessage extends Widget {
     private _role: MessageRole;
     private _content: string;
     private _timestamp?: Date;
+    private _formattedTimestamp = '';
 
     constructor(options: ChatMessageOptions, style: Partial<Style> = {}) {
         super(style);
         this._role = options.role;
         this._content = options.content;
         this._timestamp = options.timestamp;
+
+        if (this._timestamp) {
+            this._formattedTimestamp = this._timestamp.toLocaleTimeString(
+                'en-GB',
+                TIME_FORMAT,
+            );
+        }
+
         this.focusable = false;
     }
 
     /** Update the message content and mark dirty. */
     setContent(content: string): void {
-        if (this._content === content) return; 
+        if (this._content === content) return;
         this._content = content;
         this.markDirty();
     }
@@ -75,7 +79,6 @@ export class ChatMessage extends Widget {
         const config = ROLE_CONFIG[this._role];
         const baseAttrs = styleToCellAttrs(this._style);
 
-        // ── Row 0: badge + optional timestamp ────────────
         const badgeAttrs = {
             ...baseAttrs,
             fg: { type: 'named' as const, name: config.colorName as NamedColor },
@@ -83,32 +86,30 @@ export class ChatMessage extends Widget {
         screen.writeString(x, y, config.badge, badgeAttrs);
 
         if (this._timestamp) {
-            const ts = this._timestamp.toLocaleTimeString('en-GB', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-            });
-            const tsWidth = stringWidth(ts);
+            const tsWidth = stringWidth(this._formattedTimestamp);
             const tsX = x + width - tsWidth;
-            // Only draw if it fits without overlapping the badge
+
             if (tsX > x + stringWidth(config.badge)) {
                 const dimAttrs = { ...baseAttrs, dim: true };
-                screen.writeString(tsX, y, ts, dimAttrs);
+                screen.writeString(tsX, y, this._formattedTimestamp, dimAttrs);
             }
         }
 
-        // ── Rows 1..N: content text ───────────────────────
         if (height <= 1) return;
 
         const indent = '  ';
         const contentWidth = Math.max(0, width - indent.length);
-        const lines = contentWidth > 0 ? wordWrap(this._content, contentWidth).split('\n') : [];
+        const lines =
+            contentWidth > 0
+                ? wordWrap(this._content, contentWidth).split('\n')
+                : [];
+
         const maxContentRows = height - 1;
 
         for (let i = 0; i < Math.min(lines.length, maxContentRows); i++) {
             const line = lines[i];
             if (line === undefined) continue;
+
             const displayLine = truncate(indent + line, width);
             screen.writeString(x, y + 1 + i, displayLine, baseAttrs);
         }
