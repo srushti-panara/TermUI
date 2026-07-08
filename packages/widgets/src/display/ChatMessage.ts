@@ -44,10 +44,12 @@ export class ChatMessage extends Widget {
     private _role: MessageRole;
     private _content: string;
     private _timestamp?: Date;
+    private _badgeWidth: number;
 
     constructor(options: ChatMessageOptions, style: Partial<Style> = {}) {
         super(style);
         this._role = options.role;
+        this._badgeWidth = stringWidth(ROLE_CONFIG[this._role].badge);
         this._content = options.content;
         this._timestamp = options.timestamp;
         this.focusable = false;
@@ -64,6 +66,7 @@ export class ChatMessage extends Widget {
     setRole(role: MessageRole): void {
         if (this._role === role) return;
         this._role = role;
+        this._badgeWidth = stringWidth(ROLE_CONFIG[role].badge);
         this.markDirty();
     }
 
@@ -92,7 +95,7 @@ export class ChatMessage extends Widget {
             const tsWidth = stringWidth(ts);
             const tsX = x + width - tsWidth;
             // Only draw if it fits without overlapping the badge
-            if (tsX > x + stringWidth(config.badge)) {
+            if (tsX > x + this._badgeWidth) {
                 const dimAttrs = { ...baseAttrs, dim: true };
                 screen.writeString(tsX, y, ts, dimAttrs);
             }
