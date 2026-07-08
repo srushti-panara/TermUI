@@ -16,6 +16,10 @@ export class Marquee extends Widget {
     private _gap: number;
     private _offset: number = 0;
 
+    private _cachedFull = '';
+    private _cachedWidth = -1;
+    private _cachedRepeatLen = -1;
+
     constructor(text: string, style: Partial<Style> = {}, opts: MarqueeOptions = {}) {
         super(style);
         this._text = text;
@@ -34,6 +38,9 @@ export class Marquee extends Widget {
         if (text === this._text) return;
         this._text = text;
         this._offset = 0;
+        this._cachedFull = '';
+        this._cachedWidth = -1;
+        this._cachedRepeatLen = -1;
         this.markDirty();
     }
 
@@ -52,10 +59,22 @@ export class Marquee extends Widget {
 
         const totalNeeded = width + repeatLen;
         const repeats = Math.ceil(totalNeeded / repeatLen);
-        let full = '';
-        for (let i = 0; i < repeats; i++) {
-            full += this._text + gapSpaces;
+        
+        if (
+            this._cachedFull === '' ||
+            this._cachedWidth !== width ||
+            this._cachedRepeatLen !== repeatLen
+        ) {
+            this._cachedFull = '';
+            for (let i = 0; i < repeats; i++) {
+                this._cachedFull += this._text + gapSpaces;
+            }
+        
+            this._cachedWidth = width;
+            this._cachedRepeatLen = repeatLen;
         }
+        
+        const full = this._cachedFull;
 
         const effectiveOffset = this._direction === 'left'
             ? (this._offset % repeatLen)
