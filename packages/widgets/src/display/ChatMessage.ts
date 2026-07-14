@@ -21,37 +21,49 @@ export interface ChatMessageOptions {
     timestamp?: Date;
 }
 
+// ── Role configuration ────────────────────────────────
+
 const ROLE_CONFIG: Record<MessageRole, { badge: string; colorName: string }> = {
-    user: { badge: '[User]', colorName: 'cyan' },
+    user:      { badge: '[User]',      colorName: 'cyan' },
     assistant: { badge: '[Assistant]', colorName: 'green' },
-    system: { badge: '[System]', colorName: 'yellow' },
-    tool: { badge: '[Tool]', colorName: 'magenta' },
+    system:    { badge: '[System]',    colorName: 'yellow' },
+    tool:      { badge: '[Tool]',      colorName: 'magenta' },
 };
 
-const TIME_FORMAT: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-};
+// ── ChatMessage widget ────────────────────────────────
 
+/**
+ * ChatMessage — displays a single chat message with a colored role badge
+ * and word-wrapped content text.
+ *
+ * Layout:
+ *   Row 0: [Role badge] (colored)   optional timestamp (dim, right-aligned)
+ *   Row 1..N: content text, word-wrapped, indented 2 spaces
+ */
 export class ChatMessage extends Widget {
     private _role: MessageRole;
     private _content: string;
     private _timestamp?: Date;
+    private _badgeWidth: number;
     private _formattedTimestamp = '';
+
+    private _wrappedLines: string[] = [];
+    private _cachedContentWidth = -1;
 
     constructor(options: ChatMessageOptions, style: Partial<Style> = {}) {
         super(style);
         this._role = options.role;
+        this._badgeWidth = stringWidth(ROLE_CONFIG[this._role].badge);
         this._content = options.content;
         this._timestamp = options.timestamp;
 
         if (this._timestamp) {
-            this._formattedTimestamp = this._timestamp.toLocaleTimeString(
-                'en-GB',
-                TIME_FORMAT,
-            );
+            this._formattedTimestamp = this._timestamp.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+            });
         }
 
         this.focusable = false;
@@ -61,6 +73,8 @@ export class ChatMessage extends Widget {
     setContent(content: string): void {
         if (this._content === content) return;
         this._content = content;
+        this._wrappedLines = [];
+        this._cachedContentWidth = -1;
         this.markDirty();
     }
 
@@ -68,6 +82,7 @@ export class ChatMessage extends Widget {
     setRole(role: MessageRole): void {
         if (this._role === role) return;
         this._role = role;
+        this._badgeWidth = stringWidth(ROLE_CONFIG[role].badge);
         this.markDirty();
     }
 
@@ -79,6 +94,7 @@ export class ChatMessage extends Widget {
         const config = ROLE_CONFIG[this._role];
         const baseAttrs = styleToCellAttrs(this._style);
 
+        // ── Row 0: badge + optional timestamp ────────────
         const badgeAttrs = {
             ...baseAttrs,
             fg: { type: 'named' as const, name: config.colorName as NamedColor },
@@ -88,28 +104,33 @@ export class ChatMessage extends Widget {
         if (this._timestamp) {
             const tsWidth = stringWidth(this._formattedTimestamp);
             const tsX = x + width - tsWidth;
-
-            if (tsX > x + stringWidth(config.badge)) {
+            // Only draw if it fits without overlapping the badge
+            if (tsX > x + this._badgeWidth) {
                 const dimAttrs = { ...baseAttrs, dim: true };
                 screen.writeString(tsX, y, this._formattedTimestamp, dimAttrs);
             }
         }
 
+        // ── Rows 1..N: content text ───────────────────────
         if (height <= 1) return;
 
         const indent = '  ';
         const contentWidth = Math.max(0, width - indent.length);
-        const lines =
-            contentWidth > 0
-                ? wordWrap(this._content, contentWidth).split('\n')
-                : [];
 
+        if (contentWidth !== this._cachedContentWidth) {
+            this._wrappedLines =
+                contentWidth > 0
+                    ? wordWrap(this._content, contentWidth).split('\n')
+                    : [];
+            this._cachedContentWidth = contentWidth;
+        }
+
+        const lines = this._wrappedLines;
         const maxContentRows = height - 1;
 
         for (let i = 0; i < Math.min(lines.length, maxContentRows); i++) {
             const line = lines[i];
             if (line === undefined) continue;
-
             const displayLine = truncate(indent + line, width);
             screen.writeString(x, y + 1 + i, displayLine, baseAttrs);
         }
