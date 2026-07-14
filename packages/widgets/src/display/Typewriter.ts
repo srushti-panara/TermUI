@@ -84,12 +84,16 @@ export class Typewriter extends Widget {
 
   /** Replace the text and reset the reveal counter. */
   setText(text: string): void {
-    if (this._text === text) return;
-    
+    if (text === this._text) return;
     this._text = text;
     this._segments = Array.from(segmenter.segment(text));
     this._revealed = 0;
     this.markDirty();
+  }
+
+  /** Get the current text. */
+  getText(): string {
+    return this._text;
   }
 
   // ── Rendering ─────────────────────────────────────────────────────────────
