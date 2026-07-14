@@ -31,6 +31,11 @@ export class ThinkingBlock extends Widget {
     private _wrappedLines: string[] = [];
     private _cachedWrapWidth = -1;
 
+    private _topBorder = '';
+    private _bottomBorder = '';
+    private _cachedBorderWidth = -1;
+    private _cachedUnicode = caps.unicode;
+
     constructor(
         options: ThinkingBlockOptions = {},
         style: Partial<Style> = {},
@@ -111,10 +116,24 @@ export class ThinkingBlock extends Widget {
         const h = caps.unicode ? '─' : '-';
         const v = caps.unicode ? '│' : '|';
 
+        if (
+            this._cachedBorderWidth !== boxWidth ||
+            this._cachedUnicode !== caps.unicode
+        ) {
+            this._topBorder =
+                tl + h.repeat(Math.max(0, boxWidth - 2)) + tr;
+        
+            this._bottomBorder =
+                bl + h.repeat(Math.max(0, boxWidth - 2)) + br;
+        
+            this._cachedBorderWidth = boxWidth;
+            this._cachedUnicode = caps.unicode;
+        }
+        
         screen.writeString(
             rect.x,
             rect.y,
-            tl + h.repeat(Math.max(0, boxWidth - 2)) + tr,
+            this._topBorder,
             attrs,
         );
 
@@ -164,7 +183,7 @@ export class ThinkingBlock extends Widget {
         screen.writeString(
             rect.x,
             rect.y + limit + 1,
-            bl + h.repeat(Math.max(0, boxWidth - 2)) + br,
+            this._bottomBorder,
             attrs,
         );
     }
