@@ -5,7 +5,7 @@ We want to thank all the amazing contributors who have helped make TermUI what i
 | Avatar | Contributor | Contributions |
 | :---: | :--- | :---: |
 | <img src="https://avatars.githubusercontent.com/u/99573351?v=4" width="40" height="40" style="border-radius: 50%;" alt="Karanjot786" /> | [@Karanjot786](https://github.com/Karanjot786) | 344 |
-| <img src="https://avatars.githubusercontent.com/u/220186330?v=4" width="40" height="40" style="border-radius: 50%;" alt="srushti-panara" /> | [@srushti-panara](https://github.com/srushti-panara) | 74 |
+| <img src="https://avatars.githubusercontent.com/u/220186330?v=4" width="40" height="40" style="border-radius: 50%;" alt="srushti-panara" /> | [@srushti-panara](https://github.com/srushti-panara) | 75 |
 | <img src="https://avatars.githubusercontent.com/u/201338831?v=4" width="40" height="40" style="border-radius: 50%;" alt="ionfwsrijan" /> | [@ionfwsrijan](https://github.com/ionfwsrijan) | 66 |
 | <img src="https://avatars.githubusercontent.com/u/208418469?v=4" width="40" height="40" style="border-radius: 50%;" alt="Aryan-Agarwal-creator" /> | [@Aryan-Agarwal-creator](https://github.com/Aryan-Agarwal-creator) | 40 |
 | <img src="https://avatars.githubusercontent.com/u/186480203?v=4" width="40" height="40" style="border-radius: 50%;" alt="Harshithk951" /> | [@Harshithk951](https://github.com/Harshithk951) | 36 |
@@ -168,7 +168,7 @@ We want to thank all the amazing contributors who have helped make TermUI what i
 | <img src="https://avatars.githubusercontent.com/u/186922750?v=4" width="40" height="40" style="border-radius: 50%;" alt="jatingow" /> | [@jatingow](https://github.com/jatingow) | 1 |
 | <img src="https://avatars.githubusercontent.com/u/175477489?v=4" width="40" height="40" style="border-radius: 50%;" alt="kanan010506" /> | [@kanan010506](https://github.com/kanan010506) | 1 |
 | <img src="https://avatars.githubusercontent.com/u/155179625?v=4" width="40" height="40" style="border-radius: 50%;" alt="DAYHARIKA" /> | [@DAYHARIKA](https://github.com/DAYHARIKA) | 1 |
-| <img src="https://avatars.githubusercontent.com/u/184800556?v=4" width="40" height="40" style="border-radius: 50%;" alt="sahare-mayur-0071" /> | [@sahare-mayur-0071](https://github.com/sahare-mayur-0071) | 1 |
+| <img src="https://avatars.githubusercontent.com/u/184800556?v=4" width="40" height="40" style="border-radius: 50%;" alt="sahare77" /> | [@sahare77](https://github.com/sahare77) | 1 |
 | <img src="https://avatars.githubusercontent.com/u/120265441?v=4" width="40" height="40" style="border-radius: 50%;" alt="maheshshinde9100" /> | [@maheshshinde9100](https://github.com/maheshshinde9100) | 1 |
 | <img src="https://avatars.githubusercontent.com/u/267075436?v=4" width="40" height="40" style="border-radius: 50%;" alt="manasvi-sahare" /> | [@manasvi-sahare](https://github.com/manasvi-sahare) | 1 |
 | <img src="https://avatars.githubusercontent.com/u/193204489?v=4" width="40" height="40" style="border-radius: 50%;" alt="ezManish" /> | [@ezManish](https://github.com/ezManish) | 1 |
